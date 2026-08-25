@@ -47,7 +47,7 @@ const palette = ["#1d1d1f", "#0071e3", "#f5f5f7", "#c9a227", "#b4413c", "#3f7d58
 const patterns = ["None", "Gradient", "Marble", "Dots", "Stripes"];
 
 function CustomizePage() {
-  const { addItem } = useCart();
+  const { add } = useCart();
   const [model, setModel] = useState(models[0]!);
   const [finish, setFinish] = useState(finishes[0]!);
   const [color, setColor] = useState(palette[1]!);
@@ -229,7 +229,16 @@ function CustomizePage() {
             <Button
               className="mt-4 w-full"
               onClick={() => {
-                addItem("p-7", 1);
+                add(
+                  {
+                    id: `custom-${Date.now()}`,
+                    name: `Custom ${finish.name} case`,
+                    vendorId: "v-lumen",
+                    price: total,
+                    meta: `${model} · ${pattern}${text.trim() ? ` · “${text}”` : ""}`,
+                  },
+                  1,
+                );
                 toast.success("Custom design added to cart");
               }}
             >
