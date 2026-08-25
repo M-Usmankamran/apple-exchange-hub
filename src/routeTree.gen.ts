@@ -13,12 +13,15 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as CartRouteImport } from './routes/cart'
 import { Route as CheckoutRouteImport } from './routes/checkout'
+import { Route as CustomizeRouteImport } from './routes/customize'
 import { Route as ExchangeRouteImport } from './routes/exchange'
 import { Route as SellRouteImport } from './routes/sell'
 import { Route as ShopRouteImport } from './routes/shop'
 import { Route as TermsRouteImport } from './routes/terms'
 import { Route as VendorsRouteImport } from './routes/vendors'
 import { Route as DashboardAdminRouteImport } from './routes/dashboard.admin'
+import { Route as DashboardUserRouteImport } from './routes/dashboard.user'
+import { Route as DashboardVendorRouteImport } from './routes/dashboard.vendor'
 import { Route as ProductIdRouteImport } from './routes/product.$id'
 
 const IndexRoute = IndexRouteImport.update({
@@ -39,6 +42,11 @@ const CartRoute = CartRouteImport.update({
 const CheckoutRoute = CheckoutRouteImport.update({
   id: '/checkout',
   path: '/checkout',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CustomizeRoute = CustomizeRouteImport.update({
+  id: '/customize',
+  path: '/customize',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ExchangeRoute = ExchangeRouteImport.update({
@@ -71,6 +79,16 @@ const DashboardAdminRoute = DashboardAdminRouteImport.update({
   path: '/dashboard/admin',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DashboardUserRoute = DashboardUserRouteImport.update({
+  id: '/dashboard/user',
+  path: '/dashboard/user',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DashboardVendorRoute = DashboardVendorRouteImport.update({
+  id: '/dashboard/vendor',
+  path: '/dashboard/vendor',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ProductIdRoute = ProductIdRouteImport.update({
   id: '/product/$id',
   path: '/product/$id',
@@ -82,12 +100,15 @@ export interface FileRoutesByFullPath {
   '/auth': typeof AuthRoute
   '/cart': typeof CartRoute
   '/checkout': typeof CheckoutRoute
+  '/customize': typeof CustomizeRoute
   '/exchange': typeof ExchangeRoute
   '/sell': typeof SellRoute
   '/shop': typeof ShopRoute
   '/terms': typeof TermsRoute
   '/vendors': typeof VendorsRoute
   '/dashboard/admin': typeof DashboardAdminRoute
+  '/dashboard/user': typeof DashboardUserRoute
+  '/dashboard/vendor': typeof DashboardVendorRoute
   '/product/$id': typeof ProductIdRoute
 }
 export interface FileRoutesByTo {
@@ -95,12 +116,15 @@ export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
   '/cart': typeof CartRoute
   '/checkout': typeof CheckoutRoute
+  '/customize': typeof CustomizeRoute
   '/exchange': typeof ExchangeRoute
   '/sell': typeof SellRoute
   '/shop': typeof ShopRoute
   '/terms': typeof TermsRoute
   '/vendors': typeof VendorsRoute
   '/dashboard/admin': typeof DashboardAdminRoute
+  '/dashboard/user': typeof DashboardUserRoute
+  '/dashboard/vendor': typeof DashboardVendorRoute
   '/product/$id': typeof ProductIdRoute
 }
 export interface FileRoutesById {
@@ -109,12 +133,15 @@ export interface FileRoutesById {
   '/auth': typeof AuthRoute
   '/cart': typeof CartRoute
   '/checkout': typeof CheckoutRoute
+  '/customize': typeof CustomizeRoute
   '/exchange': typeof ExchangeRoute
   '/sell': typeof SellRoute
   '/shop': typeof ShopRoute
   '/terms': typeof TermsRoute
   '/vendors': typeof VendorsRoute
   '/dashboard/admin': typeof DashboardAdminRoute
+  '/dashboard/user': typeof DashboardUserRoute
+  '/dashboard/vendor': typeof DashboardVendorRoute
   '/product/$id': typeof ProductIdRoute
 }
 export interface FileRouteTypes {
@@ -124,12 +151,15 @@ export interface FileRouteTypes {
     | '/auth'
     | '/cart'
     | '/checkout'
+    | '/customize'
     | '/exchange'
     | '/sell'
     | '/shop'
     | '/terms'
     | '/vendors'
     | '/dashboard/admin'
+    | '/dashboard/user'
+    | '/dashboard/vendor'
     | '/product/$id'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -137,12 +167,15 @@ export interface FileRouteTypes {
     | '/auth'
     | '/cart'
     | '/checkout'
+    | '/customize'
     | '/exchange'
     | '/sell'
     | '/shop'
     | '/terms'
     | '/vendors'
     | '/dashboard/admin'
+    | '/dashboard/user'
+    | '/dashboard/vendor'
     | '/product/$id'
   id:
     | '__root__'
@@ -150,12 +183,15 @@ export interface FileRouteTypes {
     | '/auth'
     | '/cart'
     | '/checkout'
+    | '/customize'
     | '/exchange'
     | '/sell'
     | '/shop'
     | '/terms'
     | '/vendors'
     | '/dashboard/admin'
+    | '/dashboard/user'
+    | '/dashboard/vendor'
     | '/product/$id'
   fileRoutesById: FileRoutesById
 }
@@ -164,12 +200,15 @@ export interface RootRouteChildren {
   AuthRoute: typeof AuthRoute
   CartRoute: typeof CartRoute
   CheckoutRoute: typeof CheckoutRoute
+  CustomizeRoute: typeof CustomizeRoute
   ExchangeRoute: typeof ExchangeRoute
   SellRoute: typeof SellRoute
   ShopRoute: typeof ShopRoute
   TermsRoute: typeof TermsRoute
   VendorsRoute: typeof VendorsRoute
   DashboardAdminRoute: typeof DashboardAdminRoute
+  DashboardUserRoute: typeof DashboardUserRoute
+  DashboardVendorRoute: typeof DashboardVendorRoute
   ProductIdRoute: typeof ProductIdRoute
 }
 
@@ -201,6 +240,13 @@ declare module '@tanstack/react-router' {
       path: '/checkout'
       fullPath: '/checkout'
       preLoaderRoute: typeof CheckoutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/customize': {
+      id: '/customize'
+      path: '/customize'
+      fullPath: '/customize'
+      preLoaderRoute: typeof CustomizeRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/exchange': {
@@ -245,6 +291,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardAdminRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/dashboard/user': {
+      id: '/dashboard/user'
+      path: '/dashboard/user'
+      fullPath: '/dashboard/user'
+      preLoaderRoute: typeof DashboardUserRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dashboard/vendor': {
+      id: '/dashboard/vendor'
+      path: '/dashboard/vendor'
+      fullPath: '/dashboard/vendor'
+      preLoaderRoute: typeof DashboardVendorRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/product/$id': {
       id: '/product/$id'
       path: '/product/$id'
@@ -260,12 +320,15 @@ const rootRouteChildren: RootRouteChildren = {
   AuthRoute: AuthRoute,
   CartRoute: CartRoute,
   CheckoutRoute: CheckoutRoute,
+  CustomizeRoute: CustomizeRoute,
   ExchangeRoute: ExchangeRoute,
   SellRoute: SellRoute,
   ShopRoute: ShopRoute,
   TermsRoute: TermsRoute,
   VendorsRoute: VendorsRoute,
   DashboardAdminRoute: DashboardAdminRoute,
+  DashboardUserRoute: DashboardUserRoute,
+  DashboardVendorRoute: DashboardVendorRoute,
   ProductIdRoute: ProductIdRoute,
 }
 export const routeTree = rootRouteImport
