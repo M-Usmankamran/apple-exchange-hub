@@ -21,6 +21,7 @@ import { Route as TermsRouteImport } from './routes/terms'
 import { Route as VendorsRouteImport } from './routes/vendors'
 import { Route as DashboardAdminRouteImport } from './routes/dashboard.admin'
 import { Route as DashboardUserRouteImport } from './routes/dashboard.user'
+import { Route as DashboardVendorRouteImport } from './routes/dashboard.vendor'
 import { Route as ProductIdRouteImport } from './routes/product.$id'
 
 const IndexRoute = IndexRouteImport.update({
@@ -83,6 +84,11 @@ const DashboardUserRoute = DashboardUserRouteImport.update({
   path: '/dashboard/user',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DashboardVendorRoute = DashboardVendorRouteImport.update({
+  id: '/dashboard/vendor',
+  path: '/dashboard/vendor',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ProductIdRoute = ProductIdRouteImport.update({
   id: '/product/$id',
   path: '/product/$id',
@@ -102,6 +108,7 @@ export interface FileRoutesByFullPath {
   '/vendors': typeof VendorsRoute
   '/dashboard/admin': typeof DashboardAdminRoute
   '/dashboard/user': typeof DashboardUserRoute
+  '/dashboard/vendor': typeof DashboardVendorRoute
   '/product/$id': typeof ProductIdRoute
 }
 export interface FileRoutesByTo {
@@ -117,6 +124,7 @@ export interface FileRoutesByTo {
   '/vendors': typeof VendorsRoute
   '/dashboard/admin': typeof DashboardAdminRoute
   '/dashboard/user': typeof DashboardUserRoute
+  '/dashboard/vendor': typeof DashboardVendorRoute
   '/product/$id': typeof ProductIdRoute
 }
 export interface FileRoutesById {
@@ -133,6 +141,7 @@ export interface FileRoutesById {
   '/vendors': typeof VendorsRoute
   '/dashboard/admin': typeof DashboardAdminRoute
   '/dashboard/user': typeof DashboardUserRoute
+  '/dashboard/vendor': typeof DashboardVendorRoute
   '/product/$id': typeof ProductIdRoute
 }
 export interface FileRouteTypes {
@@ -150,6 +159,7 @@ export interface FileRouteTypes {
     | '/vendors'
     | '/dashboard/admin'
     | '/dashboard/user'
+    | '/dashboard/vendor'
     | '/product/$id'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -165,6 +175,7 @@ export interface FileRouteTypes {
     | '/vendors'
     | '/dashboard/admin'
     | '/dashboard/user'
+    | '/dashboard/vendor'
     | '/product/$id'
   id:
     | '__root__'
@@ -180,6 +191,7 @@ export interface FileRouteTypes {
     | '/vendors'
     | '/dashboard/admin'
     | '/dashboard/user'
+    | '/dashboard/vendor'
     | '/product/$id'
   fileRoutesById: FileRoutesById
 }
@@ -196,6 +208,7 @@ export interface RootRouteChildren {
   VendorsRoute: typeof VendorsRoute
   DashboardAdminRoute: typeof DashboardAdminRoute
   DashboardUserRoute: typeof DashboardUserRoute
+  DashboardVendorRoute: typeof DashboardVendorRoute
   ProductIdRoute: typeof ProductIdRoute
 }
 
@@ -285,6 +298,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardUserRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/dashboard/vendor': {
+      id: '/dashboard/vendor'
+      path: '/dashboard/vendor'
+      fullPath: '/dashboard/vendor'
+      preLoaderRoute: typeof DashboardVendorRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/product/$id': {
       id: '/product/$id'
       path: '/product/$id'
@@ -308,6 +328,7 @@ const rootRouteChildren: RootRouteChildren = {
   VendorsRoute: VendorsRoute,
   DashboardAdminRoute: DashboardAdminRoute,
   DashboardUserRoute: DashboardUserRoute,
+  DashboardVendorRoute: DashboardVendorRoute,
   ProductIdRoute: ProductIdRoute,
 }
 export const routeTree = rootRouteImport
