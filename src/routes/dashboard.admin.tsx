@@ -7,6 +7,7 @@ import {
   Ban,
   CheckCircle2,
   CreditCard,
+  Download,
   ImageIcon,
   LayoutDashboard,
   Search,
@@ -39,7 +40,26 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { formatPrice, products, vendors } from "@/lib/marketplace-data";
+import {
+  auditCategories,
+  auditSeverities,
+  auditToCsv,
+  downloadCsv,
+  formatAuditTime,
+  initialAudit,
+  type AuditCategory,
+  type AuditEntry,
+  type AuditSeverity,
+} from "@/lib/audit-log";
+
 
 export const Route = createFileRoute("/dashboard/admin")({
   head: () => ({
@@ -316,20 +336,87 @@ function AdminDashboard() {
   const [orders, setOrders] = useState(initialOrders);
   const [complaints, setComplaints] = useState(initialComplaints);
   const [userQuery, setUserQuery] = useState("");
-  const [audit, setAudit] = useState<{ id: number; text: string; time: string }[]>([
-    { id: 1, text: "Admin signed in from Lahore (192.168.*.*)", time: "09:12" },
-    { id: 2, text: "Payout batch #338 released to 6 vendors", time: "08:40" },
-    { id: 3, text: "Vendor “Gadget Bazaar” asked to resubmit CNIC", time: "Yesterday" },
-  ]);
+  const [audit, setAudit] = useState<AuditEntry[]>(initialAudit);
+  const [auditQuery, setAuditQuery] = useState("");
+  const [auditCategory, setAuditCategory] = useState<string>("all");
+  const [auditSeverity, setAuditSeverity] = useState<string>("all");
+  const [auditActor, setAuditActor] = useState<string>("all");
+  const [auditRange, setAuditRange] = useState<string>("all");
+  const [auditPage, setAuditPage] = useState(1);
+  const [auditPageSize, setAuditPageSize] = useState("10");
   const [openComplaint, setOpenComplaint] = useState<Complaint | null>(null);
   const [reply, setReply] = useState("");
 
-  const log = (text: string) => {
+  const log = (
+    text: string,
+    meta?: { category?: AuditCategory; severity?: AuditSeverity; target?: string },
+  ) => {
     setAudit((prev) => [
-      { id: Date.now(), text, time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) },
+      {
+        id: `a-${Date.now()}`,
+        at: new Date().toISOString(),
+        actor: "admin@applehub.pk",
+        category: meta?.category ?? "user",
+        severity: meta?.severity ?? "info",
+        action: text,
+        target: meta?.target ?? "—",
+        ip: "39.52.14.201",
+      },
       ...prev,
     ]);
   };
+
+  const auditActors = useMemo(
+    () => Array.from(new Set(audit.map((a) => a.actor))).sort(),
+    [audit],
+  );
+
+  const filteredAudit = useMemo(() => {
+    const q = auditQuery.trim().toLowerCase();
+    const cutoff =
+      auditRange === "all" ? 0 : Date.now() - Number(auditRange) * 3600_000;
+    return audit
+      .filter((a) => (auditCategory === "all" ? true : a.category === auditCategory))
+      .filter((a) => (auditSeverity === "all" ? true : a.severity === auditSeverity))
+      .filter((a) => (auditActor === "all" ? true : a.actor === auditActor))
+      .filter((a) => (cutoff ? new Date(a.at).getTime() >= cutoff : true))
+      .filter((a) =>
+        q
+          ? `${a.id} ${a.action} ${a.target} ${a.actor} ${a.ip}`.toLowerCase().includes(q)
+          : true,
+      )
+      .sort((a, b) => new Date(b.at).getTime() - new Date(a.at).getTime());
+  }, [audit, auditQuery, auditCategory, auditSeverity, auditActor, auditRange]);
+
+  const auditPerPage = Number(auditPageSize);
+  const auditPages = Math.max(1, Math.ceil(filteredAudit.length / auditPerPage));
+  const auditCurrentPage = Math.min(auditPage, auditPages);
+  const pagedAudit = filteredAudit.slice(
+    (auditCurrentPage - 1) * auditPerPage,
+    auditCurrentPage * auditPerPage,
+  );
+
+  const resetAuditFilters = () => {
+    setAuditQuery("");
+    setAuditCategory("all");
+    setAuditSeverity("all");
+    setAuditActor("all");
+    setAuditRange("all");
+    setAuditPage(1);
+  };
+
+  const exportAudit = () => {
+    if (!filteredAudit.length) {
+      toast.error("Nothing to export with the current filters.");
+      return;
+    }
+    downloadCsv(
+      `audit-log-${new Date().toISOString().slice(0, 10)}.csv`,
+      auditToCsv(filteredAudit),
+    );
+    toast.success(`Exported ${filteredAudit.length} audit entries to CSV.`);
+  };
+
 
   const pendingVendors = applications.filter((a) => a.status === "pending").length;
   const pendingListings = listings.filter((l) => l.status === "pending").length;
@@ -735,21 +822,209 @@ function AdminDashboard() {
         {/* Audit log */}
         <TabsContent value="audit" className="mt-6">
           <div className="rounded-2xl border bg-card p-6 shadow-sm">
-            <h3 className="font-semibold">Account audit log</h3>
-            <p className="mt-1 text-sm text-muted-foreground">
-              Immutable record of every administrative action, sign-in and payout.
-            </p>
-            <ol className="mt-6 space-y-4">
-              {audit.map((a) => (
-                <li key={a.id} className="flex gap-3 text-sm">
-                  <span className="mt-1 h-2 w-2 shrink-0 rounded-full bg-primary" />
-                  <span className="flex-1">{a.text}</span>
-                  <span className="text-xs text-muted-foreground">{a.time}</span>
-                </li>
-              ))}
-            </ol>
+            <div className="flex flex-wrap items-start justify-between gap-4">
+              <div>
+                <h3 className="font-semibold">Account audit log</h3>
+                <p className="mt-1 text-sm text-muted-foreground">
+                  Immutable record of every administrative action, sign-in and payout.
+                </p>
+              </div>
+              <div className="flex gap-2">
+                <Button variant="outline" onClick={resetAuditFilters}>
+                  Reset filters
+                </Button>
+                <Button onClick={exportAudit}>
+                  <Download className="mr-2 h-4 w-4" />
+                  Export CSV
+                </Button>
+              </div>
+            </div>
+
+            <div className="mt-6 grid gap-3 md:grid-cols-2 lg:grid-cols-5">
+              <div className="relative lg:col-span-2">
+                <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                <Input
+                  value={auditQuery}
+                  onChange={(e) => {
+                    setAuditQuery(e.target.value);
+                    setAuditPage(1);
+                  }}
+                  placeholder="Search action, target, actor or IP…"
+                  className="pl-9"
+                  aria-label="Search audit log"
+                />
+              </div>
+              <Select
+                value={auditCategory}
+                onValueChange={(v) => {
+                  setAuditCategory(v);
+                  setAuditPage(1);
+                }}
+              >
+                <SelectTrigger aria-label="Filter by category">
+                  <SelectValue placeholder="Category" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All categories</SelectItem>
+                  {auditCategories.map((c) => (
+                    <SelectItem key={c} value={c} className="capitalize">
+                      {c}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <Select
+                value={auditSeverity}
+                onValueChange={(v) => {
+                  setAuditSeverity(v);
+                  setAuditPage(1);
+                }}
+              >
+                <SelectTrigger aria-label="Filter by severity">
+                  <SelectValue placeholder="Severity" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All severities</SelectItem>
+                  {auditSeverities.map((s) => (
+                    <SelectItem key={s} value={s} className="capitalize">
+                      {s}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <Select
+                value={auditActor}
+                onValueChange={(v) => {
+                  setAuditActor(v);
+                  setAuditPage(1);
+                }}
+              >
+                <SelectTrigger aria-label="Filter by actor">
+                  <SelectValue placeholder="Actor" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All actors</SelectItem>
+                  {auditActors.map((a) => (
+                    <SelectItem key={a} value={a}>
+                      {a}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <Select
+                value={auditRange}
+                onValueChange={(v) => {
+                  setAuditRange(v);
+                  setAuditPage(1);
+                }}
+              >
+                <SelectTrigger aria-label="Filter by time range">
+                  <SelectValue placeholder="Time range" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All time</SelectItem>
+                  <SelectItem value="1">Last hour</SelectItem>
+                  <SelectItem value="24">Last 24 hours</SelectItem>
+                  <SelectItem value="72">Last 3 days</SelectItem>
+                  <SelectItem value="168">Last 7 days</SelectItem>
+                </SelectContent>
+              </Select>
+              <Select
+                value={auditPageSize}
+                onValueChange={(v) => {
+                  setAuditPageSize(v);
+                  setAuditPage(1);
+                }}
+              >
+                <SelectTrigger aria-label="Rows per page">
+                  <SelectValue placeholder="Rows" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="10">10 per page</SelectItem>
+                  <SelectItem value="25">25 per page</SelectItem>
+                  <SelectItem value="50">50 per page</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="mt-6 overflow-x-auto rounded-xl border">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Time</TableHead>
+                    <TableHead>Actor</TableHead>
+                    <TableHead>Action</TableHead>
+                    <TableHead>Target</TableHead>
+                    <TableHead>Category</TableHead>
+                    <TableHead>Severity</TableHead>
+                    <TableHead>IP</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {pagedAudit.map((a) => (
+                    <TableRow key={a.id}>
+                      <TableCell className="whitespace-nowrap text-xs text-muted-foreground">
+                        {formatAuditTime(a.at)}
+                      </TableCell>
+                      <TableCell className="whitespace-nowrap text-sm">{a.actor}</TableCell>
+                      <TableCell className="text-sm font-medium">{a.action}</TableCell>
+                      <TableCell className="text-sm text-muted-foreground">
+                        {a.target}
+                      </TableCell>
+                      <TableCell>
+                        <Badge variant="outline" className="capitalize">
+                          {a.category}
+                        </Badge>
+                      </TableCell>
+                      <TableCell>
+                        <SeverityBadge severity={a.severity} />
+                      </TableCell>
+                      <TableCell className="font-mono text-xs text-muted-foreground">
+                        {a.ip}
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                  {!pagedAudit.length && (
+                    <TableRow>
+                      <TableCell colSpan={7} className="py-10 text-center text-sm text-muted-foreground">
+                        No audit entries match these filters.
+                      </TableCell>
+                    </TableRow>
+                  )}
+                </TableBody>
+              </Table>
+            </div>
+
+            <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
+              <p className="text-xs text-muted-foreground">
+                Showing {pagedAudit.length} of {filteredAudit.length} filtered entries ·{" "}
+                {audit.length} total
+              </p>
+              <div className="flex items-center gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setAuditPage((p) => Math.max(1, p - 1))}
+                  disabled={auditCurrentPage <= 1}
+                >
+                  Previous
+                </Button>
+                <span className="text-xs text-muted-foreground">
+                  Page {auditCurrentPage} of {auditPages}
+                </span>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setAuditPage((p) => Math.min(auditPages, p + 1))}
+                  disabled={auditCurrentPage >= auditPages}
+                >
+                  Next
+                </Button>
+              </div>
+            </div>
           </div>
         </TabsContent>
+
       </Tabs>
 
       <Dialog open={!!openComplaint} onOpenChange={(o) => !o && setOpenComplaint(null)}>
@@ -793,4 +1068,10 @@ function DocChip({ label, ok }: { label: string; ok: boolean }) {
       {label}
     </span>
   );
+}
+
+function SeverityBadge({ severity }: { severity: AuditSeverity }) {
+  if (severity === "critical") return <Badge variant="destructive">Critical</Badge>;
+  if (severity === "warning") return <Badge variant="secondary">Warning</Badge>;
+  return <Badge variant="outline">Info</Badge>;
 }
