@@ -7,6 +7,7 @@ import {
   Ban,
   CheckCircle2,
   CreditCard,
+  Download,
   ImageIcon,
   LayoutDashboard,
   Search,
@@ -1067,4 +1068,10 @@ function DocChip({ label, ok }: { label: string; ok: boolean }) {
       {label}
     </span>
   );
+}
+
+function SeverityBadge({ severity }: { severity: AuditSeverity }) {
+  if (severity === "critical") return <Badge variant="destructive">Critical</Badge>;
+  if (severity === "warning") return <Badge variant="secondary">Warning</Badge>;
+  return <Badge variant="outline">Info</Badge>;
 }
