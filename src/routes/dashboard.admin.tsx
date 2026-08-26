@@ -39,7 +39,26 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { formatPrice, products, vendors } from "@/lib/marketplace-data";
+import {
+  auditCategories,
+  auditSeverities,
+  auditToCsv,
+  downloadCsv,
+  formatAuditTime,
+  initialAudit,
+  type AuditCategory,
+  type AuditEntry,
+  type AuditSeverity,
+} from "@/lib/audit-log";
+
 
 export const Route = createFileRoute("/dashboard/admin")({
   head: () => ({
