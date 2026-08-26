@@ -316,20 +316,87 @@ function AdminDashboard() {
   const [orders, setOrders] = useState(initialOrders);
   const [complaints, setComplaints] = useState(initialComplaints);
   const [userQuery, setUserQuery] = useState("");
-  const [audit, setAudit] = useState<{ id: number; text: string; time: string }[]>([
-    { id: 1, text: "Admin signed in from Lahore (192.168.*.*)", time: "09:12" },
-    { id: 2, text: "Payout batch #338 released to 6 vendors", time: "08:40" },
-    { id: 3, text: "Vendor “Gadget Bazaar” asked to resubmit CNIC", time: "Yesterday" },
-  ]);
+  const [audit, setAudit] = useState<AuditEntry[]>(initialAudit);
+  const [auditQuery, setAuditQuery] = useState("");
+  const [auditCategory, setAuditCategory] = useState<string>("all");
+  const [auditSeverity, setAuditSeverity] = useState<string>("all");
+  const [auditActor, setAuditActor] = useState<string>("all");
+  const [auditRange, setAuditRange] = useState<string>("all");
+  const [auditPage, setAuditPage] = useState(1);
+  const [auditPageSize, setAuditPageSize] = useState("10");
   const [openComplaint, setOpenComplaint] = useState<Complaint | null>(null);
   const [reply, setReply] = useState("");
 
-  const log = (text: string) => {
+  const log = (
+    text: string,
+    meta?: { category?: AuditCategory; severity?: AuditSeverity; target?: string },
+  ) => {
     setAudit((prev) => [
-      { id: Date.now(), text, time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) },
+      {
+        id: `a-${Date.now()}`,
+        at: new Date().toISOString(),
+        actor: "admin@applehub.pk",
+        category: meta?.category ?? "user",
+        severity: meta?.severity ?? "info",
+        action: text,
+        target: meta?.target ?? "—",
+        ip: "39.52.14.201",
+      },
       ...prev,
     ]);
   };
+
+  const auditActors = useMemo(
+    () => Array.from(new Set(audit.map((a) => a.actor))).sort(),
+    [audit],
+  );
+
+  const filteredAudit = useMemo(() => {
+    const q = auditQuery.trim().toLowerCase();
+    const cutoff =
+      auditRange === "all" ? 0 : Date.now() - Number(auditRange) * 3600_000;
+    return audit
+      .filter((a) => (auditCategory === "all" ? true : a.category === auditCategory))
+      .filter((a) => (auditSeverity === "all" ? true : a.severity === auditSeverity))
+      .filter((a) => (auditActor === "all" ? true : a.actor === auditActor))
+      .filter((a) => (cutoff ? new Date(a.at).getTime() >= cutoff : true))
+      .filter((a) =>
+        q
+          ? `${a.id} ${a.action} ${a.target} ${a.actor} ${a.ip}`.toLowerCase().includes(q)
+          : true,
+      )
+      .sort((a, b) => new Date(b.at).getTime() - new Date(a.at).getTime());
+  }, [audit, auditQuery, auditCategory, auditSeverity, auditActor, auditRange]);
+
+  const auditPerPage = Number(auditPageSize);
+  const auditPages = Math.max(1, Math.ceil(filteredAudit.length / auditPerPage));
+  const auditCurrentPage = Math.min(auditPage, auditPages);
+  const pagedAudit = filteredAudit.slice(
+    (auditCurrentPage - 1) * auditPerPage,
+    auditCurrentPage * auditPerPage,
+  );
+
+  const resetAuditFilters = () => {
+    setAuditQuery("");
+    setAuditCategory("all");
+    setAuditSeverity("all");
+    setAuditActor("all");
+    setAuditRange("all");
+    setAuditPage(1);
+  };
+
+  const exportAudit = () => {
+    if (!filteredAudit.length) {
+      toast.error("Nothing to export with the current filters.");
+      return;
+    }
+    downloadCsv(
+      `audit-log-${new Date().toISOString().slice(0, 10)}.csv`,
+      auditToCsv(filteredAudit),
+    );
+    toast.success(`Exported ${filteredAudit.length} audit entries to CSV.`);
+  };
+
 
   const pendingVendors = applications.filter((a) => a.status === "pending").length;
   const pendingListings = listings.filter((l) => l.status === "pending").length;
