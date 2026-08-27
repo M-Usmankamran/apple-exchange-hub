@@ -1,8 +1,15 @@
 import { Link } from "@tanstack/react-router";
-import { Menu, Moon, ShoppingBag, Sun, X } from "lucide-react";
+import { Menu, Moon, ShoppingBag, Sun, UserRound, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { useCart } from "@/lib/cart";
+
 
 const nav = [
   { to: "/shop", label: "Buy" },
@@ -65,6 +72,25 @@ export function Header() {
 
         <div className="ml-auto flex items-center gap-1">
           <ThemeToggle />
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" size="icon" aria-label="Profiles">
+                <UserRound className="size-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem asChild>
+                <Link to="/profile/user">Buyer profile</Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <Link to="/profile/vendor">Vendor profile</Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <Link to="/profile/admin">Admin profile</Link>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+
           <Button asChild variant="ghost" size="icon" aria-label="Cart" className="relative">
             <Link to="/cart">
               <ShoppingBag className="size-4" />
@@ -104,7 +130,27 @@ export function Header() {
                 {item.label}
               </Link>
             ))}
+            <div className="mt-2 border-t pt-2">
+              {(
+                [
+                  { to: "/profile/user", label: "Buyer profile" },
+                  { to: "/profile/vendor", label: "Vendor profile" },
+                  { to: "/profile/admin", label: "Admin profile" },
+                ] as const
+              ).map((item) => (
+                <Link
+                  key={item.to}
+                  to={item.to}
+                  onClick={() => setOpen(false)}
+                  className="block rounded-lg px-3 py-2.5 text-sm font-medium text-muted-foreground hover:bg-secondary hover:text-foreground"
+                  activeProps={{ className: "text-foreground" }}
+                >
+                  {item.label}
+                </Link>
+              ))}
+            </div>
             <Button asChild size="sm" className="mt-2">
+
               <Link to="/auth" onClick={() => setOpen(false)}>
                 Sign in
               </Link>
