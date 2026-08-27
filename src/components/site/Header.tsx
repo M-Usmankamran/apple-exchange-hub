@@ -65,6 +65,25 @@ export function Header() {
 
         <div className="ml-auto flex items-center gap-1">
           <ThemeToggle />
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" size="icon" aria-label="Profiles">
+                <UserRound className="size-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem asChild>
+                <Link to="/profile/user">Buyer profile</Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <Link to="/profile/vendor">Vendor profile</Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <Link to="/profile/admin">Admin profile</Link>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+
           <Button asChild variant="ghost" size="icon" aria-label="Cart" className="relative">
             <Link to="/cart">
               <ShoppingBag className="size-4" />
