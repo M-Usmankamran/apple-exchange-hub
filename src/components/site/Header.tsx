@@ -1,8 +1,15 @@
 import { Link } from "@tanstack/react-router";
-import { Menu, Moon, ShoppingBag, Sun, X } from "lucide-react";
+import { Menu, Moon, ShoppingBag, Sun, UserRound, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { useCart } from "@/lib/cart";
+
 
 const nav = [
   { to: "/shop", label: "Buy" },
