@@ -130,7 +130,27 @@ export function Header() {
                 {item.label}
               </Link>
             ))}
+            <div className="mt-2 border-t pt-2">
+              {(
+                [
+                  { to: "/profile/user", label: "Buyer profile" },
+                  { to: "/profile/vendor", label: "Vendor profile" },
+                  { to: "/profile/admin", label: "Admin profile" },
+                ] as const
+              ).map((item) => (
+                <Link
+                  key={item.to}
+                  to={item.to}
+                  onClick={() => setOpen(false)}
+                  className="block rounded-lg px-3 py-2.5 text-sm font-medium text-muted-foreground hover:bg-secondary hover:text-foreground"
+                  activeProps={{ className: "text-foreground" }}
+                >
+                  {item.label}
+                </Link>
+              ))}
+            </div>
             <Button asChild size="sm" className="mt-2">
+
               <Link to="/auth" onClick={() => setOpen(false)}>
                 Sign in
               </Link>
