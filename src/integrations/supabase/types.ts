@@ -14,16 +14,265 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      auctions: {
+        Row: {
+          bid_increment: number
+          category: string
+          city: string
+          condition: string
+          created_at: string
+          current_price: number
+          description: string | null
+          ends_at: string
+          id: string
+          image_url: string | null
+          model: string | null
+          start_price: number
+          status: string
+          storage: string | null
+          title: string
+          updated_at: string
+          vendor_id: string | null
+          vendor_name: string
+        }
+        Insert: {
+          bid_increment?: number
+          category?: string
+          city?: string
+          condition?: string
+          created_at?: string
+          current_price?: number
+          description?: string | null
+          ends_at: string
+          id?: string
+          image_url?: string | null
+          model?: string | null
+          start_price: number
+          status?: string
+          storage?: string | null
+          title: string
+          updated_at?: string
+          vendor_id?: string | null
+          vendor_name?: string
+        }
+        Update: {
+          bid_increment?: number
+          category?: string
+          city?: string
+          condition?: string
+          created_at?: string
+          current_price?: number
+          description?: string | null
+          ends_at?: string
+          id?: string
+          image_url?: string | null
+          model?: string | null
+          start_price?: number
+          status?: string
+          storage?: string | null
+          title?: string
+          updated_at?: string
+          vendor_id?: string | null
+          vendor_name?: string
+        }
+        Relationships: []
+      }
+      bids: {
+        Row: {
+          amount: number
+          auction_id: string
+          bidder_id: string
+          bidder_name: string | null
+          created_at: string
+          id: string
+        }
+        Insert: {
+          amount: number
+          auction_id: string
+          bidder_id: string
+          bidder_name?: string | null
+          created_at?: string
+          id?: string
+        }
+        Update: {
+          amount?: number
+          auction_id?: string
+          bidder_id?: string
+          bidder_name?: string | null
+          created_at?: string
+          id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bids_auction_id_fkey"
+            columns: ["auction_id"]
+            isOneToOne: false
+            referencedRelation: "auctions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      buyer_requests: {
+        Row: {
+          buyer_id: string | null
+          buyer_name: string
+          category: string
+          city: string
+          condition_pref: string | null
+          created_at: string
+          id: string
+          max_budget: number
+          model: string | null
+          notes: string | null
+          status: string
+          storage: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          buyer_id?: string | null
+          buyer_name?: string
+          category?: string
+          city?: string
+          condition_pref?: string | null
+          created_at?: string
+          id?: string
+          max_budget: number
+          model?: string | null
+          notes?: string | null
+          status?: string
+          storage?: string | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          buyer_id?: string | null
+          buyer_name?: string
+          category?: string
+          city?: string
+          condition_pref?: string | null
+          created_at?: string
+          id?: string
+          max_budget?: number
+          model?: string | null
+          notes?: string | null
+          status?: string
+          storage?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          account_type: string
+          city: string | null
+          created_at: string
+          display_name: string | null
+          id: string
+          phone: string | null
+          updated_at: string
+        }
+        Insert: {
+          account_type?: string
+          city?: string | null
+          created_at?: string
+          display_name?: string | null
+          id: string
+          phone?: string | null
+          updated_at?: string
+        }
+        Update: {
+          account_type?: string
+          city?: string | null
+          created_at?: string
+          display_name?: string | null
+          id?: string
+          phone?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      request_offers: {
+        Row: {
+          amount: number
+          created_at: string
+          id: string
+          message: string | null
+          request_id: string
+          status: string
+          updated_at: string
+          vendor_id: string
+          vendor_name: string | null
+        }
+        Insert: {
+          amount: number
+          created_at?: string
+          id?: string
+          message?: string | null
+          request_id: string
+          status?: string
+          updated_at?: string
+          vendor_id: string
+          vendor_name?: string | null
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          id?: string
+          message?: string | null
+          request_id?: string
+          status?: string
+          updated_at?: string
+          vendor_id?: string
+          vendor_name?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "request_offers_request_id_fkey"
+            columns: ["request_id"]
+            isOneToOne: false
+            referencedRelation: "buyer_requests"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_roles: {
+        Row: {
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "admin" | "vendor" | "user"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +399,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["admin", "vendor", "user"],
+    },
   },
 } as const
