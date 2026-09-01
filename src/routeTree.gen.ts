@@ -16,6 +16,7 @@ import { Route as CartRouteImport } from './routes/cart'
 import { Route as CheckoutRouteImport } from './routes/checkout'
 import { Route as CustomizeRouteImport } from './routes/customize'
 import { Route as ExchangeRouteImport } from './routes/exchange'
+import { Route as RequestsRouteImport } from './routes/requests'
 import { Route as SellRouteImport } from './routes/sell'
 import { Route as ShopRouteImport } from './routes/shop'
 import { Route as TermsRouteImport } from './routes/terms'
@@ -61,6 +62,11 @@ const CustomizeRoute = CustomizeRouteImport.update({
 const ExchangeRoute = ExchangeRouteImport.update({
   id: '/exchange',
   path: '/exchange',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RequestsRoute = RequestsRouteImport.update({
+  id: '/requests',
+  path: '/requests',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SellRoute = SellRouteImport.update({
@@ -127,6 +133,7 @@ export interface FileRoutesByFullPath {
   '/checkout': typeof CheckoutRoute
   '/customize': typeof CustomizeRoute
   '/exchange': typeof ExchangeRoute
+  '/requests': typeof RequestsRoute
   '/sell': typeof SellRoute
   '/shop': typeof ShopRoute
   '/terms': typeof TermsRoute
@@ -147,6 +154,7 @@ export interface FileRoutesByTo {
   '/checkout': typeof CheckoutRoute
   '/customize': typeof CustomizeRoute
   '/exchange': typeof ExchangeRoute
+  '/requests': typeof RequestsRoute
   '/sell': typeof SellRoute
   '/shop': typeof ShopRoute
   '/terms': typeof TermsRoute
@@ -168,6 +176,7 @@ export interface FileRoutesById {
   '/checkout': typeof CheckoutRoute
   '/customize': typeof CustomizeRoute
   '/exchange': typeof ExchangeRoute
+  '/requests': typeof RequestsRoute
   '/sell': typeof SellRoute
   '/shop': typeof ShopRoute
   '/terms': typeof TermsRoute
@@ -190,6 +199,7 @@ export interface FileRouteTypes {
     | '/checkout'
     | '/customize'
     | '/exchange'
+    | '/requests'
     | '/sell'
     | '/shop'
     | '/terms'
@@ -210,6 +220,7 @@ export interface FileRouteTypes {
     | '/checkout'
     | '/customize'
     | '/exchange'
+    | '/requests'
     | '/sell'
     | '/shop'
     | '/terms'
@@ -230,6 +241,7 @@ export interface FileRouteTypes {
     | '/checkout'
     | '/customize'
     | '/exchange'
+    | '/requests'
     | '/sell'
     | '/shop'
     | '/terms'
@@ -251,6 +263,7 @@ export interface RootRouteChildren {
   CheckoutRoute: typeof CheckoutRoute
   CustomizeRoute: typeof CustomizeRoute
   ExchangeRoute: typeof ExchangeRoute
+  RequestsRoute: typeof RequestsRoute
   SellRoute: typeof SellRoute
   ShopRoute: typeof ShopRoute
   TermsRoute: typeof TermsRoute
@@ -313,6 +326,13 @@ declare module '@tanstack/react-router' {
       path: '/exchange'
       fullPath: '/exchange'
       preLoaderRoute: typeof ExchangeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/requests': {
+      id: '/requests'
+      path: '/requests'
+      fullPath: '/requests'
+      preLoaderRoute: typeof RequestsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/sell': {
@@ -403,6 +423,7 @@ const rootRouteChildren: RootRouteChildren = {
   CheckoutRoute: CheckoutRoute,
   CustomizeRoute: CustomizeRoute,
   ExchangeRoute: ExchangeRoute,
+  RequestsRoute: RequestsRoute,
   SellRoute: SellRoute,
   ShopRoute: ShopRoute,
   TermsRoute: TermsRoute,
