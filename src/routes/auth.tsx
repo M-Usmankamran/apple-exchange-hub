@@ -1,6 +1,6 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
-import { useState } from "react";
-import { Lock, Mail, Phone, ShieldCheck, Store, User } from "lucide-react";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
+import { Lock, Mail, ShieldCheck, Store, User } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -8,6 +8,9 @@ import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { supabase } from "@/integrations/supabase/client";
+import { lovable } from "@/integrations/lovable/index";
+import { useAuth } from "@/hooks/use-auth";
 
 export const Route = createFileRoute("/auth")({
   head: () => ({
@@ -16,29 +19,88 @@ export const Route = createFileRoute("/auth")({
       {
         name: "description",
         content:
-          "Sign in as a buyer, vendor or admin. Vendor accounts are verified with CNIC, shop address and phone before going live.",
+          "Sign in as a buyer or vendor to bid on Apple auctions, post buyer requests and manage your listings on AppleHub.",
       },
       { property: "og:title", content: "Sign in to AppleHub" },
       {
         property: "og:description",
-        content: "Buyer, vendor and admin accounts with verified onboarding.",
+        content: "Buyer and vendor accounts with secure email or Google sign-in.",
       },
     ],
   }),
   component: AuthPage,
 });
 
-type Role = "buyer" | "vendor" | "admin";
-
-const roleHome: Record<Role, "/dashboard/user" | "/dashboard/vendor" | "/dashboard/admin"> = {
-  buyer: "/dashboard/user",
-  vendor: "/dashboard/vendor",
-  admin: "/dashboard/admin",
-};
+type AccountType = "buyer" | "vendor";
 
 function AuthPage() {
-  const [role, setRole] = useState<Role>("buyer");
+  const navigate = useNavigate();
+  const { user } = useAuth();
+  const [accountType, setAccountType] = useState<AccountType>("buyer");
   const [agree, setAgree] = useState(false);
+  const [busy, setBusy] = useState(false);
+  const [signIn, setSignIn] = useState({ email: "", password: "" });
+  const [signUp, setSignUp] = useState({ name: "", email: "", password: "" });
+
+  useEffect(() => {
+    if (user) navigate({ to: "/auctions", replace: true });
+  }, [user, navigate]);
+
+  const handleSignIn = async () => {
+    setBusy(true);
+    const { error } = await supabase.auth.signInWithPassword({
+      email: signIn.email.trim(),
+      password: signIn.password,
+    });
+    setBusy(false);
+    if (error) {
+      toast.error(error.message);
+      return;
+    }
+    toast.success("Welcome back!");
+    navigate({ to: "/auctions" });
+  };
+
+  const handleSignUp = async () => {
+    if (signUp.password.length < 6) {
+      toast.error("Password must be at least 6 characters.");
+      return;
+    }
+    setBusy(true);
+    const { error } = await supabase.auth.signUp({
+      email: signUp.email.trim(),
+      password: signUp.password,
+      options: {
+        emailRedirectTo: `${window.location.origin}/auctions`,
+        data: {
+          display_name: signUp.name.trim().slice(0, 80) || signUp.email.split("@")[0],
+          account_type: accountType,
+        },
+      },
+    });
+    setBusy(false);
+    if (error) {
+      toast.error(error.message);
+      return;
+    }
+    toast.success(
+      accountType === "vendor"
+        ? "Vendor account created — you can list auctions right away."
+        : "Account created. Welcome to AppleHub!",
+    );
+  };
+
+  const handleGoogle = async () => {
+    const result = await lovable.auth.signInWithOAuth("google", {
+      redirect_uri: window.location.origin,
+    });
+    if (result.error) {
+      toast.error("Google sign-in failed. Please try again.");
+      return;
+    }
+    if (result.redirected) return;
+    navigate({ to: "/auctions" });
+  };
 
   return (
     <div className="mx-auto grid max-w-5xl gap-10 px-4 py-12 lg:grid-cols-2">
@@ -47,20 +109,20 @@ function AuthPage() {
           <ShieldCheck className="h-3.5 w-3.5" /> Secure onboarding
         </Badge>
         <h1 className="mt-4 text-3xl font-bold sm:text-4xl">
-          One account for buying, selling and exchanging.
+          One account for buying, selling, bidding and exchanging.
         </h1>
         <ul className="mt-6 space-y-4 text-sm text-muted-foreground">
           <li className="flex gap-3">
-            <User className="mt-0.5 h-4 w-4" /> Buyers get order tracking, sell requests and
-            exchange offers in one place.
+            <User className="mt-0.5 h-4 w-4" /> Buyers bid on live auctions and post requests
+            vendors bid on.
           </li>
           <li className="flex gap-3">
-            <Store className="mt-0.5 h-4 w-4" /> Vendors are verified with CNIC, shop address and
-            phone before listings go live.
+            <Store className="mt-0.5 h-4 w-4" /> Vendors list auctions and answer buyer
+            requests with their best price.
           </li>
           <li className="flex gap-3">
-            <Lock className="mt-0.5 h-4 w-4" /> Passwords are hashed, sessions expire and every
-            admin action is audited.
+            <Lock className="mt-0.5 h-4 w-4" /> Accounts and bids are stored securely with
+            per-user access rules.
           </li>
         </ul>
       </section>
@@ -76,43 +138,76 @@ function AuthPage() {
             </TabsTrigger>
           </TabsList>
 
-          <div className="mt-6 grid grid-cols-3 gap-2">
-            {(["buyer", "vendor", "admin"] as Role[]).map((r) => (
-              <button
-                key={r}
-                type="button"
-                onClick={() => setRole(r)}
-                className={`rounded-xl border px-3 py-2 text-sm capitalize transition-colors ${
-                  role === r ? "border-primary bg-primary/5 font-medium" : "hover:bg-accent"
-                }`}
-              >
-                {r}
-              </button>
-            ))}
-          </div>
-
           <TabsContent value="signin" className="mt-6 space-y-4">
-            <Field id="email" label="Email" icon={Mail} type="email" placeholder="you@example.com" />
-            <Field id="password" label="Password" icon={Lock} type="password" placeholder="••••••••" />
-            <Button className="w-full" asChild>
-              <Link to={roleHome[role]}>Sign in as {role}</Link>
+            <Field
+              id="email"
+              label="Email"
+              icon={Mail}
+              type="email"
+              value={signIn.email}
+              onChange={(v) => setSignIn((p) => ({ ...p, email: v }))}
+              placeholder="you@example.com"
+            />
+            <Field
+              id="password"
+              label="Password"
+              icon={Lock}
+              type="password"
+              value={signIn.password}
+              onChange={(v) => setSignIn((p) => ({ ...p, password: v }))}
+              placeholder="••••••••"
+            />
+            <Button className="w-full" onClick={handleSignIn} disabled={busy}>
+              Sign in
             </Button>
-            <p className="text-center text-xs text-muted-foreground">
-              Demo mode — no credentials are stored yet.
-            </p>
+            <Button variant="outline" className="w-full" onClick={handleGoogle}>
+              Continue with Google
+            </Button>
           </TabsContent>
 
           <TabsContent value="register" className="mt-6 space-y-4">
-            <Field id="name" label="Full name" icon={User} placeholder="Your name" />
-            <Field id="remail" label="Email" icon={Mail} type="email" placeholder="you@example.com" />
-            <Field id="phone" label="Mobile number" icon={Phone} placeholder="+92 3xx xxx xxxx" />
-            {role === "vendor" && (
-              <>
-                <Field id="shop" label="Shop name" icon={Store} placeholder="Your store name" />
-                <Field id="cnic" label="CNIC number" icon={ShieldCheck} placeholder="35202-xxxxxxx-x" />
-              </>
-            )}
-            <Field id="rpassword" label="Password" icon={Lock} type="password" placeholder="••••••••" />
+            <div className="grid grid-cols-2 gap-2">
+              {(["buyer", "vendor"] as AccountType[]).map((r) => (
+                <button
+                  key={r}
+                  type="button"
+                  onClick={() => setAccountType(r)}
+                  className={`rounded-xl border px-3 py-2 text-sm capitalize transition-colors ${
+                    accountType === r
+                      ? "border-primary bg-primary/5 font-medium"
+                      : "hover:bg-accent"
+                  }`}
+                >
+                  {r}
+                </button>
+              ))}
+            </div>
+            <Field
+              id="name"
+              label="Full name"
+              icon={User}
+              value={signUp.name}
+              onChange={(v) => setSignUp((p) => ({ ...p, name: v }))}
+              placeholder="Your name"
+            />
+            <Field
+              id="remail"
+              label="Email"
+              icon={Mail}
+              type="email"
+              value={signUp.email}
+              onChange={(v) => setSignUp((p) => ({ ...p, email: v }))}
+              placeholder="you@example.com"
+            />
+            <Field
+              id="rpassword"
+              label="Password"
+              icon={Lock}
+              type="password"
+              value={signUp.password}
+              onChange={(v) => setSignUp((p) => ({ ...p, password: v }))}
+              placeholder="At least 6 characters"
+            />
             <label className="flex items-start gap-3 text-xs text-muted-foreground">
               <Checkbox checked={agree} onCheckedChange={(v) => setAgree(v === true)} />
               <span>
@@ -123,18 +218,11 @@ function AuthPage() {
                 and confirm my listings will match the products I deliver.
               </span>
             </label>
-            <Button
-              className="w-full"
-              disabled={!agree}
-              onClick={() =>
-                toast.success(
-                  role === "vendor"
-                    ? "Application submitted — admin approval usually takes 24 hours."
-                    : "Account created. Welcome to AppleHub!",
-                )
-              }
-            >
-              Create {role} account
+            <Button className="w-full" disabled={!agree || busy} onClick={handleSignUp}>
+              Create {accountType} account
+            </Button>
+            <Button variant="outline" className="w-full" onClick={handleGoogle}>
+              Continue with Google
             </Button>
           </TabsContent>
         </Tabs>
@@ -149,19 +237,30 @@ function Field({
   icon: Icon,
   type = "text",
   placeholder,
+  value,
+  onChange,
 }: {
   id: string;
   label: string;
   icon: React.ComponentType<{ className?: string }>;
   type?: string;
   placeholder?: string;
+  value: string;
+  onChange: (value: string) => void;
 }) {
   return (
     <div className="space-y-2">
       <Label htmlFor={id}>{label}</Label>
       <div className="relative">
         <Icon className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-        <Input id={id} type={type} placeholder={placeholder} className="pl-9" />
+        <Input
+          id={id}
+          type={type}
+          placeholder={placeholder}
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          className="pl-9"
+        />
       </div>
     </div>
   );

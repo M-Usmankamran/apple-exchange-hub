@@ -10,11 +10,13 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AuctionsRouteImport } from './routes/auctions'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as CartRouteImport } from './routes/cart'
 import { Route as CheckoutRouteImport } from './routes/checkout'
 import { Route as CustomizeRouteImport } from './routes/customize'
 import { Route as ExchangeRouteImport } from './routes/exchange'
+import { Route as RequestsRouteImport } from './routes/requests'
 import { Route as SellRouteImport } from './routes/sell'
 import { Route as ShopRouteImport } from './routes/shop'
 import { Route as TermsRouteImport } from './routes/terms'
@@ -30,6 +32,11 @@ import { Route as ProfileVendorRouteImport } from './routes/profile.vendor'
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuctionsRoute = AuctionsRouteImport.update({
+  id: '/auctions',
+  path: '/auctions',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthRoute = AuthRouteImport.update({
@@ -55,6 +62,11 @@ const CustomizeRoute = CustomizeRouteImport.update({
 const ExchangeRoute = ExchangeRouteImport.update({
   id: '/exchange',
   path: '/exchange',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RequestsRoute = RequestsRouteImport.update({
+  id: '/requests',
+  path: '/requests',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SellRoute = SellRouteImport.update({
@@ -115,11 +127,13 @@ const ProfileVendorRoute = ProfileVendorRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/auctions': typeof AuctionsRoute
   '/auth': typeof AuthRoute
   '/cart': typeof CartRoute
   '/checkout': typeof CheckoutRoute
   '/customize': typeof CustomizeRoute
   '/exchange': typeof ExchangeRoute
+  '/requests': typeof RequestsRoute
   '/sell': typeof SellRoute
   '/shop': typeof ShopRoute
   '/terms': typeof TermsRoute
@@ -134,11 +148,13 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/auctions': typeof AuctionsRoute
   '/auth': typeof AuthRoute
   '/cart': typeof CartRoute
   '/checkout': typeof CheckoutRoute
   '/customize': typeof CustomizeRoute
   '/exchange': typeof ExchangeRoute
+  '/requests': typeof RequestsRoute
   '/sell': typeof SellRoute
   '/shop': typeof ShopRoute
   '/terms': typeof TermsRoute
@@ -154,11 +170,13 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/auctions': typeof AuctionsRoute
   '/auth': typeof AuthRoute
   '/cart': typeof CartRoute
   '/checkout': typeof CheckoutRoute
   '/customize': typeof CustomizeRoute
   '/exchange': typeof ExchangeRoute
+  '/requests': typeof RequestsRoute
   '/sell': typeof SellRoute
   '/shop': typeof ShopRoute
   '/terms': typeof TermsRoute
@@ -175,11 +193,13 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/auctions'
     | '/auth'
     | '/cart'
     | '/checkout'
     | '/customize'
     | '/exchange'
+    | '/requests'
     | '/sell'
     | '/shop'
     | '/terms'
@@ -194,11 +214,13 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/auctions'
     | '/auth'
     | '/cart'
     | '/checkout'
     | '/customize'
     | '/exchange'
+    | '/requests'
     | '/sell'
     | '/shop'
     | '/terms'
@@ -213,11 +235,13 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/auctions'
     | '/auth'
     | '/cart'
     | '/checkout'
     | '/customize'
     | '/exchange'
+    | '/requests'
     | '/sell'
     | '/shop'
     | '/terms'
@@ -233,11 +257,13 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AuctionsRoute: typeof AuctionsRoute
   AuthRoute: typeof AuthRoute
   CartRoute: typeof CartRoute
   CheckoutRoute: typeof CheckoutRoute
   CustomizeRoute: typeof CustomizeRoute
   ExchangeRoute: typeof ExchangeRoute
+  RequestsRoute: typeof RequestsRoute
   SellRoute: typeof SellRoute
   ShopRoute: typeof ShopRoute
   TermsRoute: typeof TermsRoute
@@ -258,6 +284,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auctions': {
+      id: '/auctions'
+      path: '/auctions'
+      fullPath: '/auctions'
+      preLoaderRoute: typeof AuctionsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/auth': {
@@ -293,6 +326,13 @@ declare module '@tanstack/react-router' {
       path: '/exchange'
       fullPath: '/exchange'
       preLoaderRoute: typeof ExchangeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/requests': {
+      id: '/requests'
+      path: '/requests'
+      fullPath: '/requests'
+      preLoaderRoute: typeof RequestsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/sell': {
@@ -377,11 +417,13 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AuctionsRoute: AuctionsRoute,
   AuthRoute: AuthRoute,
   CartRoute: CartRoute,
   CheckoutRoute: CheckoutRoute,
   CustomizeRoute: CustomizeRoute,
   ExchangeRoute: ExchangeRoute,
+  RequestsRoute: RequestsRoute,
   SellRoute: SellRoute,
   ShopRoute: ShopRoute,
   TermsRoute: TermsRoute,

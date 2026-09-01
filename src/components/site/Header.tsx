@@ -1,4 +1,5 @@
-import { Link } from "@tanstack/react-router";
+import { Link, useNavigate } from "@tanstack/react-router";
+import { useQueryClient } from "@tanstack/react-query";
 import { Menu, Moon, ShoppingBag, Sun, UserRound, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -6,18 +7,24 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useCart } from "@/lib/cart";
+import { useAuth } from "@/hooks/use-auth";
+import { supabase } from "@/integrations/supabase/client";
 
 
 const nav = [
   { to: "/shop", label: "Buy" },
+  { to: "/auctions", label: "Bid" },
+  { to: "/requests", label: "Requests" },
   { to: "/sell", label: "Sell" },
   { to: "/exchange", label: "Exchange" },
   { to: "/customize", label: "Customize" },
   { to: "/vendors", label: "Vendors" },
 ];
+
 
 function ThemeToggle() {
   const [dark, setDark] = useState(false);
