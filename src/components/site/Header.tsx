@@ -189,12 +189,26 @@ export function Header() {
                 </Link>
               ))}
             </div>
-            <Button asChild size="sm" className="mt-2">
+            {user ? (
+              <Button
+                size="sm"
+                variant="outline"
+                className="mt-2"
+                onClick={() => {
+                  setOpen(false);
+                  void handleSignOut();
+                }}
+              >
+                Sign out
+              </Button>
+            ) : (
+              <Button asChild size="sm" className="mt-2">
+                <Link to="/auth" onClick={() => setOpen(false)}>
+                  Sign in
+                </Link>
+              </Button>
+            )}
 
-              <Link to="/auth" onClick={() => setOpen(false)}>
-                Sign in
-              </Link>
-            </Button>
           </div>
         </div>
       )}
