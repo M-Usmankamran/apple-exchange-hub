@@ -1,6 +1,6 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { Lock, Mail, ShieldCheck, Store, User } from "lucide-react";
+import { KeyRound, Lock, Mail, ShieldCheck, Store, User } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -11,6 +11,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable/index";
 import { useAuth } from "@/hooks/use-auth";
+import { claimAdminRole } from "@/lib/admin-access.functions";
+
 
 export const Route = createFileRoute("/auth")({
   head: () => ({
@@ -31,7 +33,9 @@ export const Route = createFileRoute("/auth")({
   component: AuthPage,
 });
 
-type AccountType = "buyer" | "vendor";
+type AccountType = "buyer" | "vendor" | "admin";
+
+const PENDING_ADMIN_KEY = "applehub_pending_admin_code";
 
 function AuthPage() {
   const navigate = useNavigate();
@@ -41,10 +45,23 @@ function AuthPage() {
   const [busy, setBusy] = useState(false);
   const [signIn, setSignIn] = useState({ email: "", password: "" });
   const [signUp, setSignUp] = useState({ name: "", email: "", password: "" });
+  const [inviteCode, setInviteCode] = useState("");
 
   useEffect(() => {
     if (user) navigate({ to: "/auctions", replace: true });
   }, [user, navigate]);
+
+  const grantAdmin = async (code: string) => {
+    try {
+      await claimAdminRole({ data: { inviteCode: code } });
+      sessionStorage.removeItem(PENDING_ADMIN_KEY);
+      toast.success("Admin access granted.");
+      return true;
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Could not grant admin access.");
+      return false;
+    }
+  };
 
   const handleSignIn = async () => {
     setBusy(true);
@@ -52,11 +69,14 @@ function AuthPage() {
       email: signIn.email.trim(),
       password: signIn.password,
     });
-    setBusy(false);
     if (error) {
+      setBusy(false);
       toast.error(error.message);
       return;
     }
+    const pending = sessionStorage.getItem(PENDING_ADMIN_KEY);
+    if (pending) await grantAdmin(pending);
+    setBusy(false);
     toast.success("Welcome back!");
     navigate({ to: "/auctions" });
   };
@@ -66,8 +86,12 @@ function AuthPage() {
       toast.error("Password must be at least 6 characters.");
       return;
     }
+    if (accountType === "admin" && inviteCode.trim().length < 6) {
+      toast.error("Enter the admin invite code provided by your organisation.");
+      return;
+    }
     setBusy(true);
-    const { error } = await supabase.auth.signUp({
+    const { data, error } = await supabase.auth.signUp({
       email: signUp.email.trim(),
       password: signUp.password,
       options: {
@@ -78,17 +102,36 @@ function AuthPage() {
         },
       },
     });
-    setBusy(false);
     if (error) {
+      setBusy(false);
       toast.error(error.message);
       return;
     }
+
+    if (accountType === "admin") {
+      const code = inviteCode.trim();
+      if (data.session) {
+        await grantAdmin(code);
+      } else {
+        sessionStorage.setItem(PENDING_ADMIN_KEY, code);
+        toast.success(
+          "Admin account created. Confirm your email, then sign in to activate admin access.",
+        );
+        setBusy(false);
+        return;
+      }
+    }
+
+    setBusy(false);
     toast.success(
       accountType === "vendor"
         ? "Vendor account created — you can list auctions right away."
-        : "Account created. Welcome to AppleHub!",
+        : accountType === "admin"
+          ? "Admin account ready."
+          : "Account created. Welcome to AppleHub!",
     );
   };
+
 
   const handleGoogle = async () => {
     const result = await lovable.auth.signInWithOAuth("google", {
@@ -166,8 +209,9 @@ function AuthPage() {
           </TabsContent>
 
           <TabsContent value="register" className="mt-6 space-y-4">
-            <div className="grid grid-cols-2 gap-2">
-              {(["buyer", "vendor"] as AccountType[]).map((r) => (
+            <div className="grid grid-cols-3 gap-2">
+              {(["buyer", "vendor", "admin"] as AccountType[]).map((r) => (
+
                 <button
                   key={r}
                   type="button"
@@ -208,6 +252,24 @@ function AuthPage() {
               onChange={(v) => setSignUp((p) => ({ ...p, password: v }))}
               placeholder="At least 6 characters"
             />
+            {accountType === "admin" && (
+              <>
+                <Field
+                  id="invite"
+                  label="Admin invite code"
+                  icon={KeyRound}
+                  type="password"
+                  value={inviteCode}
+                  onChange={setInviteCode}
+                  placeholder="Provided by the platform owner"
+                />
+                <p className="text-xs text-muted-foreground">
+                  Admin accounts are verified on the server with a private invite code — it
+                  can never be guessed from this page.
+                </p>
+              </>
+            )}
+
             <label className="flex items-start gap-3 text-xs text-muted-foreground">
               <Checkbox checked={agree} onCheckedChange={(v) => setAgree(v === true)} />
               <span>
