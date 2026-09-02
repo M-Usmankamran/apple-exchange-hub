@@ -209,8 +209,9 @@ function AuthPage() {
           </TabsContent>
 
           <TabsContent value="register" className="mt-6 space-y-4">
-            <div className="grid grid-cols-2 gap-2">
-              {(["buyer", "vendor"] as AccountType[]).map((r) => (
+            <div className="grid grid-cols-3 gap-2">
+              {(["buyer", "vendor", "admin"] as AccountType[]).map((r) => (
+
                 <button
                   key={r}
                   type="button"
