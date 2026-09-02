@@ -16,14 +16,12 @@ const groups = [
     links: [
       { to: "/vendors", label: "Nearby vendors" },
       { to: "/auth", label: "Become a vendor" },
-      { to: "/dashboard/vendor", label: "Vendor dashboard" },
     ],
   },
   {
     title: "Account",
     links: [
       { to: "/dashboard/user", label: "My dashboard" },
-      { to: "/dashboard/admin", label: "Admin panel" },
       { to: "/terms", label: "Terms & Conditions" },
     ],
   },
