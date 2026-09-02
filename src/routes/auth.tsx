@@ -252,6 +252,24 @@ function AuthPage() {
               onChange={(v) => setSignUp((p) => ({ ...p, password: v }))}
               placeholder="At least 6 characters"
             />
+            {accountType === "admin" && (
+              <>
+                <Field
+                  id="invite"
+                  label="Admin invite code"
+                  icon={KeyRound}
+                  type="password"
+                  value={inviteCode}
+                  onChange={setInviteCode}
+                  placeholder="Provided by the platform owner"
+                />
+                <p className="text-xs text-muted-foreground">
+                  Admin accounts are verified on the server with a private invite code — it
+                  can never be guessed from this page.
+                </p>
+              </>
+            )}
+
             <label className="flex items-start gap-3 text-xs text-muted-foreground">
               <Checkbox checked={agree} onCheckedChange={(v) => setAgree(v === true)} />
               <span>
