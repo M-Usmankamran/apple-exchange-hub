@@ -98,6 +98,14 @@ export function Header() {
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
+              {user ? (
+                <>
+                  <DropdownMenuItem disabled className="opacity-100">
+                    Signed in as {displayName}
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                </>
+              ) : null}
               <DropdownMenuItem asChild>
                 <Link to="/profile/user">Buyer profile</Link>
               </DropdownMenuItem>
@@ -107,6 +115,12 @@ export function Header() {
               <DropdownMenuItem asChild>
                 <Link to="/profile/admin">Admin profile</Link>
               </DropdownMenuItem>
+              {user ? (
+                <>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={handleSignOut}>Sign out</DropdownMenuItem>
+                </>
+              ) : null}
             </DropdownMenuContent>
           </DropdownMenu>
 
@@ -120,9 +134,16 @@ export function Header() {
               )}
             </Link>
           </Button>
-          <Button asChild size="sm" className="hidden md:inline-flex">
-            <Link to="/auth">Sign in</Link>
-          </Button>
+          {user ? (
+            <Button size="sm" variant="outline" className="hidden md:inline-flex" onClick={handleSignOut}>
+              Sign out
+            </Button>
+          ) : (
+            <Button asChild size="sm" className="hidden md:inline-flex">
+              <Link to="/auth">Sign in</Link>
+            </Button>
+          )}
+
           <Button
             variant="ghost"
             size="icon"
