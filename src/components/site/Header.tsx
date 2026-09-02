@@ -53,6 +53,18 @@ function ThemeToggle() {
 export function Header() {
   const { count } = useCart();
   const [open, setOpen] = useState(false);
+  const { user, displayName } = useAuth();
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
+
+  const handleSignOut = async () => {
+    await queryClient.cancelQueries();
+    queryClient.clear();
+    await supabase.auth.signOut();
+    navigate({ to: "/auth", replace: true });
+  };
+
+
 
   return (
     <header className="glass sticky top-0 z-50 w-full">
