@@ -6,7 +6,10 @@ import {
   Palette,
   RefreshCw,
   ShieldCheck,
+  Gavel,
+  HandCoins,
   ShoppingBag,
+
   Star,
   Truck,
   Wallet,
