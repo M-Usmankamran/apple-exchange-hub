@@ -53,6 +53,18 @@ function ThemeToggle() {
 export function Header() {
   const { count } = useCart();
   const [open, setOpen] = useState(false);
+  const { user, displayName } = useAuth();
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
+
+  const handleSignOut = async () => {
+    await queryClient.cancelQueries();
+    queryClient.clear();
+    await supabase.auth.signOut();
+    navigate({ to: "/auth", replace: true });
+  };
+
+
 
   return (
     <header className="glass sticky top-0 z-50 w-full">
@@ -86,6 +98,14 @@ export function Header() {
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
+              {user ? (
+                <>
+                  <DropdownMenuItem disabled className="opacity-100">
+                    Signed in as {displayName}
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                </>
+              ) : null}
               <DropdownMenuItem asChild>
                 <Link to="/profile/user">Buyer profile</Link>
               </DropdownMenuItem>
@@ -95,6 +115,12 @@ export function Header() {
               <DropdownMenuItem asChild>
                 <Link to="/profile/admin">Admin profile</Link>
               </DropdownMenuItem>
+              {user ? (
+                <>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={handleSignOut}>Sign out</DropdownMenuItem>
+                </>
+              ) : null}
             </DropdownMenuContent>
           </DropdownMenu>
 
@@ -108,9 +134,16 @@ export function Header() {
               )}
             </Link>
           </Button>
-          <Button asChild size="sm" className="hidden md:inline-flex">
-            <Link to="/auth">Sign in</Link>
-          </Button>
+          {user ? (
+            <Button size="sm" variant="outline" className="hidden md:inline-flex" onClick={handleSignOut}>
+              Sign out
+            </Button>
+          ) : (
+            <Button asChild size="sm" className="hidden md:inline-flex">
+              <Link to="/auth">Sign in</Link>
+            </Button>
+          )}
+
           <Button
             variant="ghost"
             size="icon"
@@ -156,12 +189,26 @@ export function Header() {
                 </Link>
               ))}
             </div>
-            <Button asChild size="sm" className="mt-2">
+            {user ? (
+              <Button
+                size="sm"
+                variant="outline"
+                className="mt-2"
+                onClick={() => {
+                  setOpen(false);
+                  void handleSignOut();
+                }}
+              >
+                Sign out
+              </Button>
+            ) : (
+              <Button asChild size="sm" className="mt-2">
+                <Link to="/auth" onClick={() => setOpen(false)}>
+                  Sign in
+                </Link>
+              </Button>
+            )}
 
-              <Link to="/auth" onClick={() => setOpen(false)}>
-                Sign in
-              </Link>
-            </Button>
           </div>
         </div>
       )}

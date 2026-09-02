@@ -6,7 +6,10 @@ import {
   Palette,
   RefreshCw,
   ShieldCheck,
+  Gavel,
+  HandCoins,
   ShoppingBag,
+
   Star,
   Truck,
   Wallet,
@@ -64,12 +67,27 @@ const actions = [
     cta: "Sell your phone",
   },
   {
+    to: "/auctions",
+    icon: Gavel,
+    title: "Bid",
+    text: "Bid live on iPhone, iPad, MacBook and AirPods auctions.",
+    cta: "Join live bidding",
+  },
+  {
+    to: "/requests",
+    icon: HandCoins,
+    title: "Request",
+    text: "Post what you want and let vendors bid their best price.",
+    cta: "Post a request",
+  },
+  {
     to: "/exchange",
     icon: RefreshCw,
     title: "Exchange",
     text: "Trade up and pay only the difference.",
     cta: "Exchange now",
   },
+
   {
     to: "/customize",
     icon: Palette,
