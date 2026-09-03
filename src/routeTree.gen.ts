@@ -28,6 +28,7 @@ import { Route as ProductIdRouteImport } from './routes/product.$id'
 import { Route as ProfileAdminRouteImport } from './routes/profile.admin'
 import { Route as ProfileUserRouteImport } from './routes/profile.user'
 import { Route as ProfileVendorRouteImport } from './routes/profile.vendor'
+import { Route as ApiPublicPaymentsJazzcashReturnRouteImport } from './routes/api/public/payments/jazzcash/return'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -124,6 +125,12 @@ const ProfileVendorRoute = ProfileVendorRouteImport.update({
   path: '/profile/vendor',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicPaymentsJazzcashReturnRoute =
+  ApiPublicPaymentsJazzcashReturnRouteImport.update({
+    id: '/api/public/payments/jazzcash/return',
+    path: '/api/public/payments/jazzcash/return',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -145,6 +152,7 @@ export interface FileRoutesByFullPath {
   '/profile/admin': typeof ProfileAdminRoute
   '/profile/user': typeof ProfileUserRoute
   '/profile/vendor': typeof ProfileVendorRoute
+  '/api/public/payments/jazzcash/return': typeof ApiPublicPaymentsJazzcashReturnRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -166,6 +174,7 @@ export interface FileRoutesByTo {
   '/profile/admin': typeof ProfileAdminRoute
   '/profile/user': typeof ProfileUserRoute
   '/profile/vendor': typeof ProfileVendorRoute
+  '/api/public/payments/jazzcash/return': typeof ApiPublicPaymentsJazzcashReturnRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -188,6 +197,7 @@ export interface FileRoutesById {
   '/profile/admin': typeof ProfileAdminRoute
   '/profile/user': typeof ProfileUserRoute
   '/profile/vendor': typeof ProfileVendorRoute
+  '/api/public/payments/jazzcash/return': typeof ApiPublicPaymentsJazzcashReturnRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -211,6 +221,7 @@ export interface FileRouteTypes {
     | '/profile/admin'
     | '/profile/user'
     | '/profile/vendor'
+    | '/api/public/payments/jazzcash/return'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -232,6 +243,7 @@ export interface FileRouteTypes {
     | '/profile/admin'
     | '/profile/user'
     | '/profile/vendor'
+    | '/api/public/payments/jazzcash/return'
   id:
     | '__root__'
     | '/'
@@ -253,6 +265,7 @@ export interface FileRouteTypes {
     | '/profile/admin'
     | '/profile/user'
     | '/profile/vendor'
+    | '/api/public/payments/jazzcash/return'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -275,6 +288,7 @@ export interface RootRouteChildren {
   ProfileAdminRoute: typeof ProfileAdminRoute
   ProfileUserRoute: typeof ProfileUserRoute
   ProfileVendorRoute: typeof ProfileVendorRoute
+  ApiPublicPaymentsJazzcashReturnRoute: typeof ApiPublicPaymentsJazzcashReturnRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -412,6 +426,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProfileVendorRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/payments/jazzcash/return': {
+      id: '/api/public/payments/jazzcash/return'
+      path: '/api/public/payments/jazzcash/return'
+      fullPath: '/api/public/payments/jazzcash/return'
+      preLoaderRoute: typeof ApiPublicPaymentsJazzcashReturnRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -435,6 +456,7 @@ const rootRouteChildren: RootRouteChildren = {
   ProfileAdminRoute: ProfileAdminRoute,
   ProfileUserRoute: ProfileUserRoute,
   ProfileVendorRoute: ProfileVendorRoute,
+  ApiPublicPaymentsJazzcashReturnRoute: ApiPublicPaymentsJazzcashReturnRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
