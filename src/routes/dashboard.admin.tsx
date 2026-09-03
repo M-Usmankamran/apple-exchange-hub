@@ -430,9 +430,27 @@ function AdminDashboard() {
   const decideVendor = (id: string, status: Status) => {
     const app = applications.find((a) => a.id === id);
     setApplications((prev) => prev.map((a) => (a.id === id ? { ...a, status } : a)));
+    if (app) {
+      if (status === "approved") {
+        approveVendorStore({
+          id: app.id,
+          shop: app.shop,
+          owner: app.owner,
+          city: app.city,
+          phone: app.phone,
+        });
+      } else {
+        removeVendorStore(app.id);
+      }
+    }
     log(`Vendor “${app?.shop}” ${status === "approved" ? "approved" : "rejected"}`);
-    toast.success(`${app?.shop} ${status === "approved" ? "approved" : "rejected"}`);
+    toast.success(
+      status === "approved"
+        ? `${app?.shop} approved — now live on the Vendors page`
+        : `${app?.shop} rejected`,
+    );
   };
+
 
   const decideListing = (id: string, status: Status) => {
     const item = listings.find((l) => l.id === id);
