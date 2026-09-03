@@ -5,7 +5,9 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Slider } from "@/components/ui/slider";
-import { products, vendors } from "@/lib/marketplace-data";
+import { products } from "@/lib/marketplace-data";
+import { useVendorDirectory } from "@/lib/vendor-directory";
+
 import { ProductCard } from "@/components/site/ProductCard";
 import storeImage from "@/assets/vendor-store.jpg";
 
@@ -29,14 +31,19 @@ export const Route = createFileRoute("/vendors")({
 });
 
 function VendorsPage() {
+  const vendors = useVendorDirectory();
   const [radius, setRadius] = useState(10);
   const [shared, setShared] = useState(false);
-  const [selected, setSelected] = useState(vendors[0]?.id ?? "");
+  const [selectedId, setSelectedId] = useState("");
+  const selected = vendors.some((v) => v.id === selectedId)
+    ? selectedId
+    : (vendors[0]?.id ?? "");
 
   const nearby = vendors
     .filter((v) => v.distanceKm <= radius)
     .sort((a, b) => a.distanceKm - b.distanceKm);
   const vendor = vendors.find((v) => v.id === selected);
+
   const vendorProducts = products.filter((p) => p.vendorId === selected);
 
   return (
@@ -77,7 +84,7 @@ function VendorsPage() {
           {nearby.map((v) => (
             <button
               key={v.id}
-              onClick={() => setSelected(v.id)}
+              onClick={() => setSelectedId(v.id)}
               className={`w-full rounded-2xl border bg-card p-5 text-left shadow-soft transition-colors ${v.id === selected ? "border-primary bg-accent" : "hover:bg-secondary"}`}
             >
               <div className="flex items-center justify-between">
