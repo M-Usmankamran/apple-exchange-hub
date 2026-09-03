@@ -31,14 +31,19 @@ export const Route = createFileRoute("/vendors")({
 });
 
 function VendorsPage() {
+  const vendors = useVendorDirectory();
   const [radius, setRadius] = useState(10);
   const [shared, setShared] = useState(false);
-  const [selected, setSelected] = useState(vendors[0]?.id ?? "");
+  const [selectedId, setSelectedId] = useState("");
+  const selected = vendors.some((v) => v.id === selectedId)
+    ? selectedId
+    : (vendors[0]?.id ?? "");
 
   const nearby = vendors
     .filter((v) => v.distanceKm <= radius)
     .sort((a, b) => a.distanceKm - b.distanceKm);
   const vendor = vendors.find((v) => v.id === selected);
+
   const vendorProducts = products.filter((p) => p.vendorId === selected);
 
   return (
