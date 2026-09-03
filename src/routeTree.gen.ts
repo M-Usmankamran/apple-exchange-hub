@@ -24,6 +24,7 @@ import { Route as VendorsRouteImport } from './routes/vendors'
 import { Route as DashboardAdminRouteImport } from './routes/dashboard.admin'
 import { Route as DashboardUserRouteImport } from './routes/dashboard.user'
 import { Route as DashboardVendorRouteImport } from './routes/dashboard.vendor'
+import { Route as OrderIdRouteImport } from './routes/order.$id'
 import { Route as ProductIdRouteImport } from './routes/product.$id'
 import { Route as ProfileAdminRouteImport } from './routes/profile.admin'
 import { Route as ProfileUserRouteImport } from './routes/profile.user'
@@ -105,6 +106,11 @@ const DashboardVendorRoute = DashboardVendorRouteImport.update({
   path: '/dashboard/vendor',
   getParentRoute: () => rootRouteImport,
 } as any)
+const OrderIdRoute = OrderIdRouteImport.update({
+  id: '/order/$id',
+  path: '/order/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ProductIdRoute = ProductIdRouteImport.update({
   id: '/product/$id',
   path: '/product/$id',
@@ -148,6 +154,7 @@ export interface FileRoutesByFullPath {
   '/dashboard/admin': typeof DashboardAdminRoute
   '/dashboard/user': typeof DashboardUserRoute
   '/dashboard/vendor': typeof DashboardVendorRoute
+  '/order/$id': typeof OrderIdRoute
   '/product/$id': typeof ProductIdRoute
   '/profile/admin': typeof ProfileAdminRoute
   '/profile/user': typeof ProfileUserRoute
@@ -170,6 +177,7 @@ export interface FileRoutesByTo {
   '/dashboard/admin': typeof DashboardAdminRoute
   '/dashboard/user': typeof DashboardUserRoute
   '/dashboard/vendor': typeof DashboardVendorRoute
+  '/order/$id': typeof OrderIdRoute
   '/product/$id': typeof ProductIdRoute
   '/profile/admin': typeof ProfileAdminRoute
   '/profile/user': typeof ProfileUserRoute
@@ -193,6 +201,7 @@ export interface FileRoutesById {
   '/dashboard/admin': typeof DashboardAdminRoute
   '/dashboard/user': typeof DashboardUserRoute
   '/dashboard/vendor': typeof DashboardVendorRoute
+  '/order/$id': typeof OrderIdRoute
   '/product/$id': typeof ProductIdRoute
   '/profile/admin': typeof ProfileAdminRoute
   '/profile/user': typeof ProfileUserRoute
@@ -217,6 +226,7 @@ export interface FileRouteTypes {
     | '/dashboard/admin'
     | '/dashboard/user'
     | '/dashboard/vendor'
+    | '/order/$id'
     | '/product/$id'
     | '/profile/admin'
     | '/profile/user'
@@ -239,6 +249,7 @@ export interface FileRouteTypes {
     | '/dashboard/admin'
     | '/dashboard/user'
     | '/dashboard/vendor'
+    | '/order/$id'
     | '/product/$id'
     | '/profile/admin'
     | '/profile/user'
@@ -261,6 +272,7 @@ export interface FileRouteTypes {
     | '/dashboard/admin'
     | '/dashboard/user'
     | '/dashboard/vendor'
+    | '/order/$id'
     | '/product/$id'
     | '/profile/admin'
     | '/profile/user'
@@ -284,6 +296,7 @@ export interface RootRouteChildren {
   DashboardAdminRoute: typeof DashboardAdminRoute
   DashboardUserRoute: typeof DashboardUserRoute
   DashboardVendorRoute: typeof DashboardVendorRoute
+  OrderIdRoute: typeof OrderIdRoute
   ProductIdRoute: typeof ProductIdRoute
   ProfileAdminRoute: typeof ProfileAdminRoute
   ProfileUserRoute: typeof ProfileUserRoute
@@ -398,6 +411,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardVendorRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/order/$id': {
+      id: '/order/$id'
+      path: '/order/$id'
+      fullPath: '/order/$id'
+      preLoaderRoute: typeof OrderIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/product/$id': {
       id: '/product/$id'
       path: '/product/$id'
@@ -452,6 +472,7 @@ const rootRouteChildren: RootRouteChildren = {
   DashboardAdminRoute: DashboardAdminRoute,
   DashboardUserRoute: DashboardUserRoute,
   DashboardVendorRoute: DashboardVendorRoute,
+  OrderIdRoute: OrderIdRoute,
   ProductIdRoute: ProductIdRoute,
   ProfileAdminRoute: ProfileAdminRoute,
   ProfileUserRoute: ProfileUserRoute,
