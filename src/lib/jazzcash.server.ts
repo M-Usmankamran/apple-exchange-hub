@@ -45,8 +45,9 @@ export function pktStamp(date: Date): string {
 
 /**
  * Secure hash = HMAC-SHA256 over "salt&v1&v2&..." where the values are the
- * non-empty pp_*/ppmpf_* fields sorted by field name (case-insensitive).
+ * non-empty pp_ and ppmpf_ fields sorted by field name (case-insensitive).
  */
+
 export function secureHash(fields: Record<string, string>, salt: string): string {
   const values = Object.keys(fields)
     .filter((k) => /^(pp_|ppmpf_)/i.test(k) && k.toLowerCase() !== "pp_securehash")
