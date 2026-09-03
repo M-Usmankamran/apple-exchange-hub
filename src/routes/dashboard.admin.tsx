@@ -48,6 +48,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { formatPrice, products, vendors } from "@/lib/marketplace-data";
+import { approveVendorStore, removeVendorStore } from "@/lib/vendor-directory";
+
 import {
   auditCategories,
   auditSeverities,
