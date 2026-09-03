@@ -84,7 +84,7 @@ function VendorsPage() {
           {nearby.map((v) => (
             <button
               key={v.id}
-              onClick={() => setSelected(v.id)}
+              onClick={() => setSelectedId(v.id)}
               className={`w-full rounded-2xl border bg-card p-5 text-left shadow-soft transition-colors ${v.id === selected ? "border-primary bg-accent" : "hover:bg-secondary"}`}
             >
               <div className="flex items-center justify-between">
