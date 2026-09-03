@@ -5,7 +5,9 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Slider } from "@/components/ui/slider";
-import { products, vendors } from "@/lib/marketplace-data";
+import { products } from "@/lib/marketplace-data";
+import { useVendorDirectory } from "@/lib/vendor-directory";
+
 import { ProductCard } from "@/components/site/ProductCard";
 import storeImage from "@/assets/vendor-store.jpg";
 
