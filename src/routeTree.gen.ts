@@ -24,10 +24,12 @@ import { Route as VendorsRouteImport } from './routes/vendors'
 import { Route as DashboardAdminRouteImport } from './routes/dashboard.admin'
 import { Route as DashboardUserRouteImport } from './routes/dashboard.user'
 import { Route as DashboardVendorRouteImport } from './routes/dashboard.vendor'
+import { Route as OrderIdRouteImport } from './routes/order.$id'
 import { Route as ProductIdRouteImport } from './routes/product.$id'
 import { Route as ProfileAdminRouteImport } from './routes/profile.admin'
 import { Route as ProfileUserRouteImport } from './routes/profile.user'
 import { Route as ProfileVendorRouteImport } from './routes/profile.vendor'
+import { Route as ApiPublicPaymentsJazzcashReturnRouteImport } from './routes/api/public/payments/jazzcash/return'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -104,6 +106,11 @@ const DashboardVendorRoute = DashboardVendorRouteImport.update({
   path: '/dashboard/vendor',
   getParentRoute: () => rootRouteImport,
 } as any)
+const OrderIdRoute = OrderIdRouteImport.update({
+  id: '/order/$id',
+  path: '/order/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ProductIdRoute = ProductIdRouteImport.update({
   id: '/product/$id',
   path: '/product/$id',
@@ -124,6 +131,12 @@ const ProfileVendorRoute = ProfileVendorRouteImport.update({
   path: '/profile/vendor',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicPaymentsJazzcashReturnRoute =
+  ApiPublicPaymentsJazzcashReturnRouteImport.update({
+    id: '/api/public/payments/jazzcash/return',
+    path: '/api/public/payments/jazzcash/return',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -141,10 +154,12 @@ export interface FileRoutesByFullPath {
   '/dashboard/admin': typeof DashboardAdminRoute
   '/dashboard/user': typeof DashboardUserRoute
   '/dashboard/vendor': typeof DashboardVendorRoute
+  '/order/$id': typeof OrderIdRoute
   '/product/$id': typeof ProductIdRoute
   '/profile/admin': typeof ProfileAdminRoute
   '/profile/user': typeof ProfileUserRoute
   '/profile/vendor': typeof ProfileVendorRoute
+  '/api/public/payments/jazzcash/return': typeof ApiPublicPaymentsJazzcashReturnRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -162,10 +177,12 @@ export interface FileRoutesByTo {
   '/dashboard/admin': typeof DashboardAdminRoute
   '/dashboard/user': typeof DashboardUserRoute
   '/dashboard/vendor': typeof DashboardVendorRoute
+  '/order/$id': typeof OrderIdRoute
   '/product/$id': typeof ProductIdRoute
   '/profile/admin': typeof ProfileAdminRoute
   '/profile/user': typeof ProfileUserRoute
   '/profile/vendor': typeof ProfileVendorRoute
+  '/api/public/payments/jazzcash/return': typeof ApiPublicPaymentsJazzcashReturnRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -184,10 +201,12 @@ export interface FileRoutesById {
   '/dashboard/admin': typeof DashboardAdminRoute
   '/dashboard/user': typeof DashboardUserRoute
   '/dashboard/vendor': typeof DashboardVendorRoute
+  '/order/$id': typeof OrderIdRoute
   '/product/$id': typeof ProductIdRoute
   '/profile/admin': typeof ProfileAdminRoute
   '/profile/user': typeof ProfileUserRoute
   '/profile/vendor': typeof ProfileVendorRoute
+  '/api/public/payments/jazzcash/return': typeof ApiPublicPaymentsJazzcashReturnRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -207,10 +226,12 @@ export interface FileRouteTypes {
     | '/dashboard/admin'
     | '/dashboard/user'
     | '/dashboard/vendor'
+    | '/order/$id'
     | '/product/$id'
     | '/profile/admin'
     | '/profile/user'
     | '/profile/vendor'
+    | '/api/public/payments/jazzcash/return'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -228,10 +249,12 @@ export interface FileRouteTypes {
     | '/dashboard/admin'
     | '/dashboard/user'
     | '/dashboard/vendor'
+    | '/order/$id'
     | '/product/$id'
     | '/profile/admin'
     | '/profile/user'
     | '/profile/vendor'
+    | '/api/public/payments/jazzcash/return'
   id:
     | '__root__'
     | '/'
@@ -249,10 +272,12 @@ export interface FileRouteTypes {
     | '/dashboard/admin'
     | '/dashboard/user'
     | '/dashboard/vendor'
+    | '/order/$id'
     | '/product/$id'
     | '/profile/admin'
     | '/profile/user'
     | '/profile/vendor'
+    | '/api/public/payments/jazzcash/return'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -271,10 +296,12 @@ export interface RootRouteChildren {
   DashboardAdminRoute: typeof DashboardAdminRoute
   DashboardUserRoute: typeof DashboardUserRoute
   DashboardVendorRoute: typeof DashboardVendorRoute
+  OrderIdRoute: typeof OrderIdRoute
   ProductIdRoute: typeof ProductIdRoute
   ProfileAdminRoute: typeof ProfileAdminRoute
   ProfileUserRoute: typeof ProfileUserRoute
   ProfileVendorRoute: typeof ProfileVendorRoute
+  ApiPublicPaymentsJazzcashReturnRoute: typeof ApiPublicPaymentsJazzcashReturnRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -384,6 +411,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardVendorRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/order/$id': {
+      id: '/order/$id'
+      path: '/order/$id'
+      fullPath: '/order/$id'
+      preLoaderRoute: typeof OrderIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/product/$id': {
       id: '/product/$id'
       path: '/product/$id'
@@ -412,6 +446,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProfileVendorRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/payments/jazzcash/return': {
+      id: '/api/public/payments/jazzcash/return'
+      path: '/api/public/payments/jazzcash/return'
+      fullPath: '/api/public/payments/jazzcash/return'
+      preLoaderRoute: typeof ApiPublicPaymentsJazzcashReturnRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -431,10 +472,12 @@ const rootRouteChildren: RootRouteChildren = {
   DashboardAdminRoute: DashboardAdminRoute,
   DashboardUserRoute: DashboardUserRoute,
   DashboardVendorRoute: DashboardVendorRoute,
+  OrderIdRoute: OrderIdRoute,
   ProductIdRoute: ProductIdRoute,
   ProfileAdminRoute: ProfileAdminRoute,
   ProfileUserRoute: ProfileUserRoute,
   ProfileVendorRoute: ProfileVendorRoute,
+  ApiPublicPaymentsJazzcashReturnRoute: ApiPublicPaymentsJazzcashReturnRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

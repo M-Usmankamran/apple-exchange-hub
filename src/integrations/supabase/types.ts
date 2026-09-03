@@ -163,6 +163,116 @@ export type Database = {
         }
         Relationships: []
       }
+      order_items: {
+        Row: {
+          created_at: string
+          id: string
+          image_url: string | null
+          order_id: string
+          product_id: string
+          product_name: string
+          qty: number
+          unit_price: number
+          vendor_name: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          image_url?: string | null
+          order_id: string
+          product_id: string
+          product_name: string
+          qty: number
+          unit_price: number
+          vendor_name?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          image_url?: string | null
+          order_id?: string
+          product_id?: string
+          product_name?: string
+          qty?: number
+          unit_price?: number
+          vendor_name?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "order_items_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      orders: {
+        Row: {
+          buyer_email: string
+          buyer_id: string
+          buyer_name: string
+          buyer_phone: string
+          created_at: string
+          currency: string
+          delivery_address: string | null
+          gateway: string | null
+          gateway_response_code: string | null
+          gateway_response_message: string | null
+          gateway_retrieval_ref: string | null
+          gateway_txn_ref: string | null
+          id: string
+          paid_at: string | null
+          payment_method: string
+          payment_status: string
+          status: string
+          total_amount: number
+          updated_at: string
+        }
+        Insert: {
+          buyer_email: string
+          buyer_id: string
+          buyer_name: string
+          buyer_phone: string
+          created_at?: string
+          currency?: string
+          delivery_address?: string | null
+          gateway?: string | null
+          gateway_response_code?: string | null
+          gateway_response_message?: string | null
+          gateway_retrieval_ref?: string | null
+          gateway_txn_ref?: string | null
+          id?: string
+          paid_at?: string | null
+          payment_method?: string
+          payment_status?: string
+          status?: string
+          total_amount: number
+          updated_at?: string
+        }
+        Update: {
+          buyer_email?: string
+          buyer_id?: string
+          buyer_name?: string
+          buyer_phone?: string
+          created_at?: string
+          currency?: string
+          delivery_address?: string | null
+          gateway?: string | null
+          gateway_response_code?: string | null
+          gateway_response_message?: string | null
+          gateway_retrieval_ref?: string | null
+          gateway_txn_ref?: string | null
+          id?: string
+          paid_at?: string | null
+          payment_method?: string
+          payment_status?: string
+          status?: string
+          total_amount?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           account_type: string
