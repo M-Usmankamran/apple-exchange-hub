@@ -16,7 +16,8 @@ import {
 } from "@/components/ui/select";
 import { formatPrice } from "@/lib/marketplace-data";
 import { useCart } from "@/lib/cart";
-import caseImage from "@/assets/customize-case.jpg";
+import { PhonePreview3D } from "@/components/site/PhonePreview3D";
+
 
 export const Route = createFileRoute("/customize")({
   head: () => ({
