@@ -83,35 +83,21 @@ function CustomizePage() {
       </header>
 
       <div className="mt-10 grid gap-8 lg:grid-cols-[minmax(0,1fr)_380px]">
-        <div className="rounded-3xl border bg-card p-8 shadow-sm">
-          <div className="mx-auto w-full max-w-[280px]">
-            <div
-              className="relative aspect-[9/19] overflow-hidden rounded-[2.5rem] border-4 border-foreground/10 shadow-lg"
-              style={{ background }}
-            >
-              <img
-                src={caseImage}
-                alt={`Live preview of a custom ${finish.name} case for ${model}`}
-                className="h-full w-full object-cover opacity-15"
-              />
-              <div className="absolute right-5 top-5 h-16 w-16 rounded-2xl bg-foreground/10" />
-              {magsafe && (
-                <div className="absolute left-1/2 top-1/3 h-20 w-20 -translate-x-1/2 rounded-full border-2 border-dashed border-foreground/20" />
-              )}
-              {text.trim() && (
-                <span
-                  className="absolute bottom-12 left-0 right-0 text-center font-semibold text-white drop-shadow"
-                  style={{ fontSize: size }}
-                >
-                  {text}
-                </span>
-              )}
-            </div>
-          </div>
-          <p className="mt-6 text-center text-xs text-muted-foreground">
+        <div className="rounded-3xl border bg-gradient-to-b from-muted/40 to-card p-6 shadow-sm sm:p-8">
+          <PhonePreview3D
+            caseBackground={background}
+            color={color}
+            model={model}
+            finish={finish.name}
+            text={text}
+            textSize={size}
+            magsafe={magsafe}
+          />
+          <p className="mt-4 text-center text-xs text-muted-foreground">
             {model} · {finish.name} · {pattern}
           </p>
         </div>
+
 
         <aside className="space-y-6 rounded-3xl border bg-card p-6 shadow-sm">
           <div className="space-y-2">
