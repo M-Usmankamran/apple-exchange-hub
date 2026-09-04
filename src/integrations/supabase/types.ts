@@ -278,6 +278,7 @@ export type Database = {
           account_type: string
           city: string | null
           created_at: string
+          delivery_address: string | null
           display_name: string | null
           id: string
           phone: string | null
@@ -287,6 +288,7 @@ export type Database = {
           account_type?: string
           city?: string | null
           created_at?: string
+          delivery_address?: string | null
           display_name?: string | null
           id: string
           phone?: string | null
@@ -296,6 +298,7 @@ export type Database = {
           account_type?: string
           city?: string | null
           created_at?: string
+          delivery_address?: string | null
           display_name?: string | null
           id?: string
           phone?: string | null
