@@ -71,10 +71,12 @@ export function PhonePreview3D({
   };
 
   const railStyle: React.CSSProperties = {
-    background: caseBackground,
-    backgroundBlendMode: "multiply",
+    backgroundColor: "#e9e9ee",
+    backgroundImage: caseBackground,
+    backfaceVisibility: "hidden",
     boxShadow: "inset 0 0 12px rgba(0,0,0,.35)",
   };
+
 
   const norm = ((angle % 360) + 360) % 360;
   const facing = norm > 90 && norm < 270 ? "Back" : "Front";
