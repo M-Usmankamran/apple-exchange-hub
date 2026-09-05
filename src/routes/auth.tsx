@@ -128,10 +128,24 @@ function AuthPage() {
       return;
     }
 
+    let session = data.session;
+    if (!session) {
+      // Auto-confirm is on, so signing in immediately gives us a live session.
+      const { data: signedIn } = await supabase.auth.signInWithPassword({
+        email: signUp.email.trim(),
+        password: signUp.password,
+      });
+      session = signedIn.session ?? null;
+    }
+
     if (accountType === "admin") {
       const code = inviteCode.trim();
-      if (data.session) {
-        await grantAdmin(code);
+      if (session) {
+        const ok = await grantAdmin(code);
+        if (!ok) {
+          setBusy(false);
+          return;
+        }
       } else {
         sessionStorage.setItem(PENDING_ADMIN_KEY, code);
         toast.success(
@@ -150,6 +164,16 @@ function AuthPage() {
           ? "Admin account ready."
           : "Account created. Welcome to AppleHub!",
     );
+
+    if (session) {
+      if (accountType === "admin") {
+        navigate({ to: "/dashboard/admin", replace: true });
+      } else if (accountType === "vendor") {
+        navigate({ to: "/dashboard/vendor", replace: true });
+      } else {
+        await redirectForRole(session.user.id);
+      }
+    }
   };
 
 
