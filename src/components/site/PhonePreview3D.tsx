@@ -117,6 +117,7 @@ export function PhonePreview3D({
             className="absolute inset-0 overflow-hidden rounded-[2.6rem]"
             style={{
               transform: `translateZ(${DEPTH / 2}px)`,
+              backfaceVisibility: "hidden",
               background: "linear-gradient(160deg,#2b2b2f,#08080a 45%,#131317)",
               boxShadow: `inset 0 0 0 3px rgba(255,255,255,.08), inset 0 0 0 9px ${color}`,
             }}
