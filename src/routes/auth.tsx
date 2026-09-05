@@ -96,7 +96,9 @@ function AuthPage() {
     if (pending) await grantAdmin(pending);
     setBusy(false);
     toast.success("Welcome back!");
-    navigate({ to: "/auctions" });
+    const { data: sessionData } = await supabase.auth.getSession();
+    const userId = sessionData.session?.user.id;
+    if (userId) await redirectForRole(userId);
   };
 
   const handleSignUp = async () => {
