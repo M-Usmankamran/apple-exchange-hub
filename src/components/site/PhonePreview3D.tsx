@@ -166,7 +166,10 @@ export function PhonePreview3D({
             className="absolute inset-0 overflow-hidden rounded-[2.6rem]"
             style={{
               transform: `translateZ(-${DEPTH / 2}px) rotateY(180deg)`,
-              background: caseBackground,
+              backfaceVisibility: "hidden",
+              backgroundColor: "#e9e9ee",
+              backgroundImage: caseBackground,
+              backgroundSize: "cover",
               boxShadow:
                 "inset 0 0 0 3px rgba(255,255,255,.22), inset 0 -60px 90px rgba(0,0,0,.28), inset 0 60px 90px rgba(255,255,255,.12)",
             }}
