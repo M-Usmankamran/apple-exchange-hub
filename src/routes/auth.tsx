@@ -47,9 +47,27 @@ function AuthPage() {
   const [signUp, setSignUp] = useState({ name: "", email: "", password: "" });
   const [inviteCode, setInviteCode] = useState("");
 
+  // Route each role to its own home: admin → admin dashboard,
+  // vendor → vendor dashboard, everyone else → homepage.
+  const redirectForRole = async (userId: string) => {
+    const { data: roles } = await supabase
+      .from("user_roles")
+      .select("role")
+      .eq("user_id", userId);
+    const list = (roles ?? []).map((r) => r.role as string);
+    if (list.includes("admin")) {
+      navigate({ to: "/dashboard/admin", replace: true });
+    } else if (list.includes("vendor")) {
+      navigate({ to: "/dashboard/vendor", replace: true });
+    } else {
+      navigate({ to: "/", replace: true });
+    }
+  };
+
   useEffect(() => {
-    if (user) navigate({ to: "/auctions", replace: true });
-  }, [user, navigate]);
+    if (user) void redirectForRole(user.id);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user]);
 
   const grantAdmin = async (code: string) => {
     try {
@@ -78,7 +96,9 @@ function AuthPage() {
     if (pending) await grantAdmin(pending);
     setBusy(false);
     toast.success("Welcome back!");
-    navigate({ to: "/auctions" });
+    const { data: sessionData } = await supabase.auth.getSession();
+    const userId = sessionData.session?.user.id;
+    if (userId) await redirectForRole(userId);
   };
 
   const handleSignUp = async () => {
@@ -141,8 +161,9 @@ function AuthPage() {
       toast.error("Google sign-in failed. Please try again.");
       return;
     }
+    // Full-page redirect or session handoff: the useEffect above routes the
+    // signed-in user to the right dashboard once the session is live.
     if (result.redirected) return;
-    navigate({ to: "/auctions" });
   };
 
   return (
