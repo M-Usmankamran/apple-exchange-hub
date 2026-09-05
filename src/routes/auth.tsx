@@ -161,8 +161,9 @@ function AuthPage() {
       toast.error("Google sign-in failed. Please try again.");
       return;
     }
+    // Full-page redirect or session handoff: the useEffect above routes the
+    // signed-in user to the right dashboard once the session is live.
     if (result.redirected) return;
-    navigate({ to: "/auctions" });
   };
 
   return (
