@@ -283,6 +283,7 @@ export type Database = {
           id: string
           phone: string | null
           updated_at: string
+          vendor_status: string
         }
         Insert: {
           account_type?: string
@@ -293,6 +294,7 @@ export type Database = {
           id: string
           phone?: string | null
           updated_at?: string
+          vendor_status?: string
         }
         Update: {
           account_type?: string
@@ -303,6 +305,7 @@ export type Database = {
           id?: string
           phone?: string | null
           updated_at?: string
+          vendor_status?: string
         }
         Relationships: []
       }
