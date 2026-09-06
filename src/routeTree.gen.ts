@@ -17,6 +17,7 @@ import { Route as CheckoutRouteImport } from './routes/checkout'
 import { Route as CustomizeRouteImport } from './routes/customize'
 import { Route as ExchangeRouteImport } from './routes/exchange'
 import { Route as RequestsRouteImport } from './routes/requests'
+import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as SellRouteImport } from './routes/sell'
 import { Route as ShopRouteImport } from './routes/shop'
 import { Route as TermsRouteImport } from './routes/terms'
@@ -69,6 +70,11 @@ const ExchangeRoute = ExchangeRouteImport.update({
 const RequestsRoute = RequestsRouteImport.update({
   id: '/requests',
   path: '/requests',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ResetPasswordRoute = ResetPasswordRouteImport.update({
+  id: '/reset-password',
+  path: '/reset-password',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SellRoute = SellRouteImport.update({
@@ -147,6 +153,7 @@ export interface FileRoutesByFullPath {
   '/customize': typeof CustomizeRoute
   '/exchange': typeof ExchangeRoute
   '/requests': typeof RequestsRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/sell': typeof SellRoute
   '/shop': typeof ShopRoute
   '/terms': typeof TermsRoute
@@ -170,6 +177,7 @@ export interface FileRoutesByTo {
   '/customize': typeof CustomizeRoute
   '/exchange': typeof ExchangeRoute
   '/requests': typeof RequestsRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/sell': typeof SellRoute
   '/shop': typeof ShopRoute
   '/terms': typeof TermsRoute
@@ -194,6 +202,7 @@ export interface FileRoutesById {
   '/customize': typeof CustomizeRoute
   '/exchange': typeof ExchangeRoute
   '/requests': typeof RequestsRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/sell': typeof SellRoute
   '/shop': typeof ShopRoute
   '/terms': typeof TermsRoute
@@ -219,6 +228,7 @@ export interface FileRouteTypes {
     | '/customize'
     | '/exchange'
     | '/requests'
+    | '/reset-password'
     | '/sell'
     | '/shop'
     | '/terms'
@@ -242,6 +252,7 @@ export interface FileRouteTypes {
     | '/customize'
     | '/exchange'
     | '/requests'
+    | '/reset-password'
     | '/sell'
     | '/shop'
     | '/terms'
@@ -265,6 +276,7 @@ export interface FileRouteTypes {
     | '/customize'
     | '/exchange'
     | '/requests'
+    | '/reset-password'
     | '/sell'
     | '/shop'
     | '/terms'
@@ -289,6 +301,7 @@ export interface RootRouteChildren {
   CustomizeRoute: typeof CustomizeRoute
   ExchangeRoute: typeof ExchangeRoute
   RequestsRoute: typeof RequestsRoute
+  ResetPasswordRoute: typeof ResetPasswordRoute
   SellRoute: typeof SellRoute
   ShopRoute: typeof ShopRoute
   TermsRoute: typeof TermsRoute
@@ -360,6 +373,13 @@ declare module '@tanstack/react-router' {
       path: '/requests'
       fullPath: '/requests'
       preLoaderRoute: typeof RequestsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/reset-password': {
+      id: '/reset-password'
+      path: '/reset-password'
+      fullPath: '/reset-password'
+      preLoaderRoute: typeof ResetPasswordRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/sell': {
@@ -465,6 +485,7 @@ const rootRouteChildren: RootRouteChildren = {
   CustomizeRoute: CustomizeRoute,
   ExchangeRoute: ExchangeRoute,
   RequestsRoute: RequestsRoute,
+  ResetPasswordRoute: ResetPasswordRoute,
   SellRoute: SellRoute,
   ShopRoute: ShopRoute,
   TermsRoute: TermsRoute,
