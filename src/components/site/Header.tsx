@@ -11,7 +11,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useCart } from "@/lib/cart";
-import { useAuth } from "@/hooks/use-auth";
+import { useAuth, homePathForRoles } from "@/hooks/use-auth";
 import { supabase } from "@/integrations/supabase/client";
 
 
@@ -53,7 +53,7 @@ function ThemeToggle() {
 export function Header() {
   const { count } = useCart();
   const [open, setOpen] = useState(false);
-  const { user, displayName } = useAuth();
+  const { user, displayName, roles, isAdmin, isVendor } = useAuth();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
@@ -106,15 +106,24 @@ export function Header() {
                   <DropdownMenuSeparator />
                 </>
               ) : null}
+              {user ? (
+                <DropdownMenuItem asChild>
+                  <Link to={homePathForRoles(roles)}>My dashboard</Link>
+                </DropdownMenuItem>
+              ) : null}
               <DropdownMenuItem asChild>
                 <Link to="/profile/user">Buyer profile</Link>
               </DropdownMenuItem>
-              <DropdownMenuItem asChild>
-                <Link to="/profile/vendor">Vendor profile</Link>
-              </DropdownMenuItem>
-              <DropdownMenuItem asChild>
-                <Link to="/profile/admin">Admin profile</Link>
-              </DropdownMenuItem>
+              {isVendor ? (
+                <DropdownMenuItem asChild>
+                  <Link to="/profile/vendor">Vendor profile</Link>
+                </DropdownMenuItem>
+              ) : null}
+              {isAdmin ? (
+                <DropdownMenuItem asChild>
+                  <Link to="/profile/admin">Admin profile</Link>
+                </DropdownMenuItem>
+              ) : null}
               {user ? (
                 <>
                   <DropdownMenuSeparator />
@@ -172,9 +181,10 @@ export function Header() {
             ))}
             <div className="mt-2 border-t pt-2">
               {[
+                ...(user ? [{ to: homePathForRoles(roles), label: "My dashboard" }] : []),
                 { to: "/profile/user", label: "Buyer profile" },
-                { to: "/profile/vendor", label: "Vendor profile" },
-                { to: "/profile/admin", label: "Admin profile" },
+                ...(isVendor ? [{ to: "/profile/vendor", label: "Vendor profile" }] : []),
+                ...(isAdmin ? [{ to: "/profile/admin", label: "Admin profile" }] : []),
               ].map((item) => (
                 <Link
                   key={item.to}
