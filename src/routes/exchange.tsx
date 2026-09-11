@@ -1,3 +1,4 @@
+import { useRequireAuth } from "@/components/site/AuthGate";
 import { createFileRoute } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { ArrowRight, MessageCircle, RefreshCw, Upload } from "lucide-react";

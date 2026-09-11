@@ -1,3 +1,4 @@
+import { useRequireAuth } from "@/components/site/AuthGate";
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { Palette, Sparkles, Type as TypeIcon } from "lucide-react";
