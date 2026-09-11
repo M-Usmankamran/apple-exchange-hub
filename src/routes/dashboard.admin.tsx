@@ -1,3 +1,4 @@
+import { AuthGate } from "@/components/site/AuthGate";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import {
@@ -81,7 +82,11 @@ export const Route = createFileRoute("/dashboard/admin")({
       { name: "robots", content: "noindex" },
     ],
   }),
-  component: AdminDashboard,
+  component: () => (
+    <AuthGate role="admin" title="the admin dashboard">
+      <AdminDashboard />
+    </AuthGate>
+  ),
 });
 
 type Status = "pending" | "approved" | "rejected";

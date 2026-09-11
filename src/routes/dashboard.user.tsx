@@ -1,3 +1,4 @@
+import { AuthGate } from "@/components/site/AuthGate";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import {
@@ -37,7 +38,11 @@ export const Route = createFileRoute("/dashboard/user")({
       { name: "robots", content: "noindex" },
     ],
   }),
-  component: UserDashboard,
+  component: () => (
+    <AuthGate title="your dashboard">
+      <UserDashboard />
+    </AuthGate>
+  ),
 });
 
 const orders = [

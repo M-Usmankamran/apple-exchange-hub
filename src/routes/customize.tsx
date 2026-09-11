@@ -1,3 +1,4 @@
+import { useRequireAuth } from "@/components/site/AuthGate";
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { Palette, Sparkles, Type as TypeIcon } from "lucide-react";
@@ -48,6 +49,7 @@ const palette = ["#1d1d1f", "#0071e3", "#f5f5f7", "#c9a227", "#b4413c", "#3f7d58
 const patterns = ["None", "Gradient", "Marble", "Dots", "Stripes"];
 
 function CustomizePage() {
+  const requireAuth = useRequireAuth();
   const { add } = useCart();
   const [model, setModel] = useState(models[0]!);
   const [finish, setFinish] = useState(finishes[0]!);
@@ -216,6 +218,7 @@ function CustomizePage() {
             <Button
               className="mt-4 w-full"
               onClick={() => {
+                if (!requireAuth("Please sign in to order a custom design.")) return;
                 add(
                   {
                     id: `custom-${Date.now()}`,

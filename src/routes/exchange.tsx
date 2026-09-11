@@ -1,3 +1,4 @@
+import { useRequireAuth } from "@/components/site/AuthGate";
 import { createFileRoute } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { ArrowRight, MessageCircle, RefreshCw, Upload } from "lucide-react";
@@ -43,6 +44,7 @@ export const Route = createFileRoute("/exchange")({
 });
 
 function ExchangePage() {
+  const requireAuth = useRequireAuth();
   const [wantAmount, setWantAmount] = useState("");
   const [targetId, setTargetId] = useState(products[0]?.id ?? "");
   const [model, setModel] = useState("");
@@ -61,6 +63,7 @@ function ExchangePage() {
 
   const submit = (e: React.FormEvent) => {
     e.preventDefault();
+    if (!requireAuth("Please sign in to submit an exchange request.")) return;
     if (!model.trim() || !storage || !condition || !wantAmount) {
       toast.error("Please complete your device details and asking value");
       return;
