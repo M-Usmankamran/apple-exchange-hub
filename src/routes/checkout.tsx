@@ -30,6 +30,7 @@ export const Route = createFileRoute("/checkout")({
 });
 
 function Checkout() {
+  const requireAuth = useRequireAuth();
   const { items, total, clear } = useCart();
   const [method, setMethod] = useState<"online" | "store">("online");
   const [agreed, setAgreed] = useState(false);
@@ -63,6 +64,7 @@ function Checkout() {
 
   const submit = (e: React.FormEvent) => {
     e.preventDefault();
+    if (!requireAuth("Please sign in to place your order.")) return;
     if (!agreed) {
       toast.error("Please accept the Terms & Conditions to continue");
       return;

@@ -48,6 +48,7 @@ const palette = ["#1d1d1f", "#0071e3", "#f5f5f7", "#c9a227", "#b4413c", "#3f7d58
 const patterns = ["None", "Gradient", "Marble", "Dots", "Stripes"];
 
 function CustomizePage() {
+  const requireAuth = useRequireAuth();
   const { add } = useCart();
   const [model, setModel] = useState(models[0]!);
   const [finish, setFinish] = useState(finishes[0]!);

@@ -49,6 +49,7 @@ const sellSchema = z.object({
 });
 
 function SellPage() {
+  const requireAuth = useRequireAuth();
   const [radius, setRadius] = useState(10);
   const [locationShared, setLocationShared] = useState(false);
   const [agreed, setAgreed] = useState(false);
@@ -66,6 +67,7 @@ function SellPage() {
 
   const submit = (e: React.FormEvent) => {
     e.preventDefault();
+    if (!requireAuth("Please sign in to send your device to vendors.")) return;
     const parsed = sellSchema.safeParse(form);
     if (!parsed.success) {
       toast.error(parsed.error.issues[0]?.message ?? "Please check the form");
