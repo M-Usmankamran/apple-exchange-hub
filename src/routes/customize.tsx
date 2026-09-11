@@ -218,6 +218,7 @@ function CustomizePage() {
             <Button
               className="mt-4 w-full"
               onClick={() => {
+                if (!requireAuth("Please sign in to order a custom design.")) return;
                 add(
                   {
                     id: `custom-${Date.now()}`,
