@@ -132,7 +132,7 @@ function AuctionsPage() {
           <Link to="/auth" className="font-medium text-foreground underline">
             Sign in
           </Link>{" "}
-          to place bids or list your own auction.
+          to view live auctions, place bids or list your own auction.
         </div>
       )}
 
