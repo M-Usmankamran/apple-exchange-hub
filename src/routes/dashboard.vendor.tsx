@@ -45,7 +45,11 @@ export const Route = createFileRoute("/dashboard/vendor")({
       { name: "robots", content: "noindex" },
     ],
   }),
-  component: VendorDashboardPage,
+  component: () => (
+    <AuthGate role="vendor" title="the vendor dashboard">
+      <VendorDashboardPage />
+    </AuthGate>
+  ),
 });
 
 const myProducts = products.filter((p) => p.vendorId === "v-apex" || p.vendorId === "v-corex");

@@ -81,7 +81,11 @@ export const Route = createFileRoute("/dashboard/admin")({
       { name: "robots", content: "noindex" },
     ],
   }),
-  component: AdminDashboard,
+  component: () => (
+    <AuthGate role="admin" title="the admin dashboard">
+      <AdminDashboard />
+    </AuthGate>
+  ),
 });
 
 type Status = "pending" | "approved" | "rejected";

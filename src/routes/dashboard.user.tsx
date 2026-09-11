@@ -37,7 +37,11 @@ export const Route = createFileRoute("/dashboard/user")({
       { name: "robots", content: "noindex" },
     ],
   }),
-  component: UserDashboard,
+  component: () => (
+    <AuthGate title="your dashboard">
+      <UserDashboard />
+    </AuthGate>
+  ),
 });
 
 const orders = [
