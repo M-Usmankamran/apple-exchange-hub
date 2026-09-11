@@ -50,6 +50,13 @@ import {
 } from "@/components/ui/select";
 import { formatPrice, products, vendors } from "@/lib/marketplace-data";
 import { approveVendorStore, removeVendorStore } from "@/lib/vendor-directory";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useServerFn } from "@tanstack/react-start";
+import {
+  decideVendorSignup,
+  listVendorSignups,
+  type VendorSignup,
+} from "@/lib/vendor-approvals.functions";
 
 import {
   auditCategories,
@@ -425,7 +432,50 @@ function AdminDashboard() {
   };
 
 
-  const pendingVendors = applications.filter((a) => a.status === "pending").length;
+  const fetchSignups = useServerFn(listVendorSignups);
+  const decideSignup = useServerFn(decideVendorSignup);
+  const queryClient = useQueryClient();
+
+  const signupsQuery = useQuery({
+    queryKey: ["vendor-signups"],
+    queryFn: () => fetchSignups(),
+  });
+  const signups: VendorSignup[] = signupsQuery.data ?? [];
+  const pendingSignups = signups.filter((s) => s.status === "pending" || s.status === "none");
+
+  const signupDecision = useMutation({
+    mutationFn: (vars: { signup: VendorSignup; status: "approved" | "rejected" }) =>
+      decideSignup({ data: { userId: vars.signup.userId, status: vars.status } }),
+    onSuccess: (_res, vars) => {
+      if (vars.status === "approved") {
+        approveVendorStore({
+          id: vars.signup.userId,
+          shop: vars.signup.shop,
+          owner: vars.signup.owner,
+          city: vars.signup.city === "Not provided" ? "Pakistan" : vars.signup.city,
+          phone: vars.signup.phone === "Not provided" ? "" : vars.signup.phone,
+        });
+      } else {
+        removeVendorStore(vars.signup.userId);
+      }
+      log(
+        `Vendor account ${vars.signup.email} ${
+          vars.status === "approved" ? "approved" : "rejected"
+        }`,
+      );
+      toast.success(
+        vars.status === "approved"
+          ? `${vars.signup.shop} approved — they can now use the vendor dashboard`
+          : `${vars.signup.shop} rejected`,
+      );
+      void queryClient.invalidateQueries({ queryKey: ["vendor-signups"] });
+    },
+    onError: (error: unknown) =>
+      toast.error(error instanceof Error ? error.message : "Could not save that decision."),
+  });
+
+  const pendingVendors =
+    applications.filter((a) => a.status === "pending").length + pendingSignups.length;
   const pendingListings = listings.filter((l) => l.status === "pending").length;
   const openComplaints = complaints.filter((c) => c.status === "open").length;
   const gmv = useMemo(() => orders.reduce((s, o) => s + o.amount, 0), [orders]);
@@ -546,6 +596,75 @@ function AdminDashboard() {
 
         {/* Vendor approvals */}
         <TabsContent value="vendors" className="mt-6 space-y-4">
+          <div className="rounded-2xl border bg-card p-5 shadow-sm">
+            <h2 className="text-lg font-semibold">Vendor sign-ups</h2>
+            <p className="mt-1 text-sm text-muted-foreground">
+              Real accounts that registered as vendors on the website.
+            </p>
+            {signupsQuery.isLoading ? (
+              <p className="mt-4 text-sm text-muted-foreground">Loading vendor sign-ups…</p>
+            ) : signupsQuery.isError ? (
+              <p className="mt-4 text-sm text-destructive">
+                Could not load vendor sign-ups. Please refresh the page.
+              </p>
+            ) : signups.length === 0 ? (
+              <p className="mt-4 text-sm text-muted-foreground">
+                No vendor sign-ups yet. New vendor registrations will show up here.
+              </p>
+            ) : (
+              <div className="mt-4 space-y-3">
+                {signups.map((s) => {
+                  const isPending = s.status === "pending" || s.status === "none";
+                  return (
+                    <div
+                      key={s.userId}
+                      className="flex flex-wrap items-start justify-between gap-4 rounded-xl border p-4"
+                    >
+                      <div>
+                        <div className="flex items-center gap-2">
+                          <h3 className="font-semibold">{s.shop}</h3>
+                          <StatusBadge status={isPending ? "pending" : (s.status as Status)} />
+                        </div>
+                        <p className="mt-1 text-sm text-muted-foreground">
+                          {s.email} · {s.phone} · {s.city}
+                        </p>
+                        <p className="mt-1 text-xs text-muted-foreground">
+                          Registered {new Date(s.submittedAt).toLocaleDateString()}
+                        </p>
+                      </div>
+                      <div className="flex gap-2">
+                        {s.status !== "approved" && (
+                          <Button
+                            size="sm"
+                            disabled={signupDecision.isPending}
+                            onClick={() =>
+                              signupDecision.mutate({ signup: s, status: "approved" })
+                            }
+                          >
+                            <CheckCircle2 className="mr-2 h-4 w-4" /> Approve
+                          </Button>
+                        )}
+                        {s.status !== "rejected" && (
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            disabled={signupDecision.isPending}
+                            onClick={() =>
+                              signupDecision.mutate({ signup: s, status: "rejected" })
+                            }
+                          >
+                            <XCircle className="mr-2 h-4 w-4" /> Reject
+                          </Button>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+
+          <h2 className="pt-2 text-lg font-semibold">Sample applications</h2>
           {applications.map((a) => (
             <div key={a.id} className="rounded-2xl border bg-card p-5 shadow-sm">
               <div className="flex flex-wrap items-start justify-between gap-4">
