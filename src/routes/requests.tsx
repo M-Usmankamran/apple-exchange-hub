@@ -115,7 +115,7 @@ function RequestsPage() {
           <Link to="/auth" className="font-medium text-foreground underline">
             Sign in
           </Link>{" "}
-          to post a request or send a vendor offer.
+          to view buyer requests, post a request or send a vendor offer.
         </div>
       )}
 
