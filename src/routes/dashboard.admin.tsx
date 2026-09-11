@@ -596,6 +596,75 @@ function AdminDashboard() {
 
         {/* Vendor approvals */}
         <TabsContent value="vendors" className="mt-6 space-y-4">
+          <div className="rounded-2xl border bg-card p-5 shadow-sm">
+            <h2 className="text-lg font-semibold">Vendor sign-ups</h2>
+            <p className="mt-1 text-sm text-muted-foreground">
+              Real accounts that registered as vendors on the website.
+            </p>
+            {signupsQuery.isLoading ? (
+              <p className="mt-4 text-sm text-muted-foreground">Loading vendor sign-ups…</p>
+            ) : signupsQuery.isError ? (
+              <p className="mt-4 text-sm text-destructive">
+                Could not load vendor sign-ups. Please refresh the page.
+              </p>
+            ) : signups.length === 0 ? (
+              <p className="mt-4 text-sm text-muted-foreground">
+                No vendor sign-ups yet. New vendor registrations will show up here.
+              </p>
+            ) : (
+              <div className="mt-4 space-y-3">
+                {signups.map((s) => {
+                  const isPending = s.status === "pending" || s.status === "none";
+                  return (
+                    <div
+                      key={s.userId}
+                      className="flex flex-wrap items-start justify-between gap-4 rounded-xl border p-4"
+                    >
+                      <div>
+                        <div className="flex items-center gap-2">
+                          <h3 className="font-semibold">{s.shop}</h3>
+                          <StatusBadge status={isPending ? "pending" : (s.status as Status)} />
+                        </div>
+                        <p className="mt-1 text-sm text-muted-foreground">
+                          {s.email} · {s.phone} · {s.city}
+                        </p>
+                        <p className="mt-1 text-xs text-muted-foreground">
+                          Registered {new Date(s.submittedAt).toLocaleDateString()}
+                        </p>
+                      </div>
+                      <div className="flex gap-2">
+                        {s.status !== "approved" && (
+                          <Button
+                            size="sm"
+                            disabled={signupDecision.isPending}
+                            onClick={() =>
+                              signupDecision.mutate({ signup: s, status: "approved" })
+                            }
+                          >
+                            <CheckCircle2 className="mr-2 h-4 w-4" /> Approve
+                          </Button>
+                        )}
+                        {s.status !== "rejected" && (
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            disabled={signupDecision.isPending}
+                            onClick={() =>
+                              signupDecision.mutate({ signup: s, status: "rejected" })
+                            }
+                          >
+                            <XCircle className="mr-2 h-4 w-4" /> Reject
+                          </Button>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+
+          <h2 className="pt-2 text-lg font-semibold">Sample applications</h2>
           {applications.map((a) => (
             <div key={a.id} className="rounded-2xl border bg-card p-5 shadow-sm">
               <div className="flex flex-wrap items-start justify-between gap-4">
