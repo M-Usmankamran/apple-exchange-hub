@@ -1,3 +1,4 @@
+import { AuthGate } from "@/components/site/AuthGate";
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import {
