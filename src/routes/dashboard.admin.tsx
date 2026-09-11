@@ -453,7 +453,7 @@ function AdminDashboard() {
           shop: vars.signup.shop,
           owner: vars.signup.owner,
           city: vars.signup.city === "Not provided" ? "Pakistan" : vars.signup.city,
-          phone: vars.signup.phone === "Not provided" ? undefined : vars.signup.phone,
+          phone: vars.signup.phone === "Not provided" ? "" : vars.signup.phone,
         });
       } else {
         removeVendorStore(vars.signup.userId);
