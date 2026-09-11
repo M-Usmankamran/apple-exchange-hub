@@ -432,7 +432,50 @@ function AdminDashboard() {
   };
 
 
-  const pendingVendors = applications.filter((a) => a.status === "pending").length;
+  const fetchSignups = useServerFn(listVendorSignups);
+  const decideSignup = useServerFn(decideVendorSignup);
+  const queryClient = useQueryClient();
+
+  const signupsQuery = useQuery({
+    queryKey: ["vendor-signups"],
+    queryFn: () => fetchSignups(),
+  });
+  const signups: VendorSignup[] = signupsQuery.data ?? [];
+  const pendingSignups = signups.filter((s) => s.status === "pending" || s.status === "none");
+
+  const signupDecision = useMutation({
+    mutationFn: (vars: { signup: VendorSignup; status: "approved" | "rejected" }) =>
+      decideSignup({ data: { userId: vars.signup.userId, status: vars.status } }),
+    onSuccess: (_res, vars) => {
+      if (vars.status === "approved") {
+        approveVendorStore({
+          id: vars.signup.userId,
+          shop: vars.signup.shop,
+          owner: vars.signup.owner,
+          city: vars.signup.city === "Not provided" ? "Pakistan" : vars.signup.city,
+          phone: vars.signup.phone === "Not provided" ? undefined : vars.signup.phone,
+        });
+      } else {
+        removeVendorStore(vars.signup.userId);
+      }
+      log(
+        `Vendor account ${vars.signup.email} ${
+          vars.status === "approved" ? "approved" : "rejected"
+        }`,
+      );
+      toast.success(
+        vars.status === "approved"
+          ? `${vars.signup.shop} approved — they can now use the vendor dashboard`
+          : `${vars.signup.shop} rejected`,
+      );
+      void queryClient.invalidateQueries({ queryKey: ["vendor-signups"] });
+    },
+    onError: (error: unknown) =>
+      toast.error(error instanceof Error ? error.message : "Could not save that decision."),
+  });
+
+  const pendingVendors =
+    applications.filter((a) => a.status === "pending").length + pendingSignups.length;
   const pendingListings = listings.filter((l) => l.status === "pending").length;
   const openComplaints = complaints.filter((c) => c.status === "open").length;
   const gmv = useMemo(() => orders.reduce((s, o) => s + o.amount, 0), [orders]);
