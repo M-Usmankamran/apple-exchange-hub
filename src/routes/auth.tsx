@@ -24,11 +24,11 @@ import { useAuth, homePathForRoles, type AppRole } from "@/hooks/use-auth";
 import { claimAdminRole } from "@/lib/admin-access.functions";
 
 export const Route = createFileRoute("/auth")({
-  validateSearch: (search: Record<string, unknown>) => {
+  validateSearch: (search: Record<string, unknown>): { redirect?: string } => {
     const raw = typeof search['redirect'] === "string" ? (search['redirect'] as string) : "";
     // Only ever return people to a path inside this site.
-    const redirect = raw.startsWith("/") && !raw.startsWith("//") ? raw : undefined;
-    return { redirect };
+    if (raw.startsWith("/") && !raw.startsWith("//")) return { redirect: raw };
+    return {};
   },
   head: () => ({
     meta: [
