@@ -50,6 +50,13 @@ import {
 } from "@/components/ui/select";
 import { formatPrice, products, vendors } from "@/lib/marketplace-data";
 import { approveVendorStore, removeVendorStore } from "@/lib/vendor-directory";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useServerFn } from "@tanstack/react-start";
+import {
+  decideVendorSignup,
+  listVendorSignups,
+  type VendorSignup,
+} from "@/lib/vendor-approvals.functions";
 
 import {
   auditCategories,
