@@ -89,10 +89,12 @@ export const decideVendorSignup = createServerFn({ method: "POST" })
     await assertAdmin(context as any);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
 
-    const update: Record<string, string> = { vendor_status: data.status };
-    if (data.shop) update["display_name"] = data.shop;
-    if (data.phone) update["phone"] = data.phone;
-    if (data.city) update["city"] = data.city;
+    const update = {
+      vendor_status: data.status,
+      ...(data.shop ? { display_name: data.shop } : {}),
+      ...(data.phone ? { phone: data.phone } : {}),
+      ...(data.city ? { city: data.city } : {}),
+    };
 
     const { error: profileError } = await supabaseAdmin
       .from("profiles")
