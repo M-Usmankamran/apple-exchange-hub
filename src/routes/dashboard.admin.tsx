@@ -445,7 +445,15 @@ function AdminDashboard() {
 
   const signupDecision = useMutation({
     mutationFn: (vars: { signup: VendorSignup; status: "approved" | "rejected" }) =>
-      decideSignup({ data: { userId: vars.signup.userId, status: vars.status } }),
+      decideSignup({
+        data: {
+          userId: vars.signup.userId,
+          status: vars.status,
+          shop: vars.signup.shop,
+          phone: vars.signup.phone,
+          city: vars.signup.city,
+        },
+      }),
     onSuccess: (_res, vars) => {
       if (vars.status === "approved") {
         approveVendorStore({
