@@ -633,29 +633,9 @@ function AdminDashboard() {
                         </p>
                       </div>
                       <div className="flex gap-2">
-                        {s.status !== "approved" && (
-                          <Button
-                            size="sm"
-                            disabled={signupDecision.isPending}
-                            onClick={() =>
-                              signupDecision.mutate({ signup: s, status: "approved" })
-                            }
-                          >
-                            <CheckCircle2 className="mr-2 h-4 w-4" /> Approve
-                          </Button>
-                        )}
-                        {s.status !== "rejected" && (
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            disabled={signupDecision.isPending}
-                            onClick={() =>
-                              signupDecision.mutate({ signup: s, status: "rejected" })
-                            }
-                          >
-                            <XCircle className="mr-2 h-4 w-4" /> Reject
-                          </Button>
-                        )}
+                        <Button size="sm" variant="outline" onClick={() => openReview(s)}>
+                          <FileText className="mr-2 h-4 w-4" /> Review application
+                        </Button>
                       </div>
                     </div>
                   );
@@ -663,6 +643,134 @@ function AdminDashboard() {
               </div>
             )}
           </div>
+
+          <Dialog
+            open={Boolean(reviewSignup)}
+            onOpenChange={(open) => {
+              if (!open) setReviewSignup(null);
+            }}
+          >
+            <DialogContent className="max-h-[85vh] overflow-y-auto sm:max-w-lg">
+              <DialogHeader>
+                <DialogTitle>Vendor application</DialogTitle>
+                <DialogDescription>
+                  Check the details and documents, then approve or reject this vendor.
+                </DialogDescription>
+              </DialogHeader>
+
+              <div className="space-y-4">
+                <div className="rounded-xl border bg-muted/40 p-3 text-sm">
+                  <p className="font-medium">{reviewSignup?.email}</p>
+                  <p className="mt-1 text-xs text-muted-foreground">
+                    Registered{" "}
+                    {reviewSignup
+                      ? new Date(reviewSignup.submittedAt).toLocaleDateString()
+                      : "—"}{" "}
+                    · current status {reviewSignup?.status}
+                  </p>
+                </div>
+
+                <div className="grid gap-3 sm:grid-cols-2">
+                  <div className="sm:col-span-2">
+                    <label className="text-xs font-medium text-muted-foreground">
+                      Shop / store name
+                    </label>
+                    <Input
+                      value={reviewForm.shop}
+                      onChange={(e) => setReviewForm((f) => ({ ...f, shop: e.target.value }))}
+                      placeholder="e.g. iZone Digital"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-xs font-medium text-muted-foreground">
+                      Contact phone
+                    </label>
+                    <Input
+                      value={reviewForm.phone}
+                      onChange={(e) => setReviewForm((f) => ({ ...f, phone: e.target.value }))}
+                      placeholder="+92 300 1234567"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-xs font-medium text-muted-foreground">City</label>
+                    <Input
+                      value={reviewForm.city}
+                      onChange={(e) => setReviewForm((f) => ({ ...f, city: e.target.value }))}
+                      placeholder="Lahore"
+                    />
+                  </div>
+                  <div className="sm:col-span-2">
+                    <label className="text-xs font-medium text-muted-foreground">
+                      CNIC number
+                    </label>
+                    <Input
+                      value={reviewForm.cnic}
+                      onChange={(e) => setReviewForm((f) => ({ ...f, cnic: e.target.value }))}
+                      placeholder="35202-1234567-8"
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-2 rounded-xl border p-3">
+                  <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+                    Documents verified
+                  </p>
+                  {(
+                    [
+                      ["cnicChecked", "CNIC scan matches the owner"],
+                      ["shopChecked", "Shop photo looks genuine"],
+                      ["billChecked", "Utility bill / address proof seen"],
+                    ] as const
+                  ).map(([key, label]) => (
+                    <label key={key} className="flex items-center gap-2 text-sm">
+                      <input
+                        type="checkbox"
+                        className="h-4 w-4 accent-primary"
+                        checked={reviewForm[key]}
+                        onChange={(e) =>
+                          setReviewForm((f) => ({ ...f, [key]: e.target.checked }))
+                        }
+                      />
+                      {label}
+                    </label>
+                  ))}
+                </div>
+
+                <div>
+                  <label className="text-xs font-medium text-muted-foreground">
+                    Review notes (saved to the audit log)
+                  </label>
+                  <Textarea
+                    value={reviewForm.notes}
+                    onChange={(e) => setReviewForm((f) => ({ ...f, notes: e.target.value }))}
+                    placeholder="What you checked, anything still missing…"
+                  />
+                </div>
+
+                <div className="flex flex-wrap justify-end gap-2 pt-1">
+                  <Button
+                    variant="outline"
+                    onClick={() => submitReview("rejected")}
+                    disabled={signupDecision.isPending}
+                  >
+                    <XCircle className="mr-2 h-4 w-4" /> Reject
+                  </Button>
+                  <Button
+                    onClick={() => submitReview("approved")}
+                    disabled={signupDecision.isPending || !allDocsChecked}
+                  >
+                    <CheckCircle2 className="mr-2 h-4 w-4" /> Approve vendor
+                  </Button>
+                </div>
+                {!allDocsChecked && (
+                  <p className="text-right text-xs text-muted-foreground">
+                    Tick all three document checks to enable approval.
+                  </p>
+                )}
+              </div>
+            </DialogContent>
+          </Dialog>
+
 
           <h2 className="pt-2 text-lg font-semibold">Sample applications</h2>
           {applications.map((a) => (
