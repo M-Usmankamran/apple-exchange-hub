@@ -8,6 +8,7 @@ import {
   Ban,
   CheckCircle2,
   CreditCard,
+  FileText,
   Download,
   ImageIcon,
   LayoutDashboard,
