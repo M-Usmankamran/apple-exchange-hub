@@ -482,6 +482,56 @@ function AdminDashboard() {
       toast.error(error instanceof Error ? error.message : "Could not save that decision."),
   });
 
+  const [reviewSignup, setReviewSignup] = useState<VendorSignup | null>(null);
+  const [reviewForm, setReviewForm] = useState({
+    shop: "",
+    phone: "",
+    city: "",
+    cnic: "",
+    cnicChecked: false,
+    shopChecked: false,
+    billChecked: false,
+    notes: "",
+  });
+  const allDocsChecked =
+    reviewForm.cnicChecked && reviewForm.shopChecked && reviewForm.billChecked;
+
+  const openReview = (s: VendorSignup) => {
+    setReviewSignup(s);
+    setReviewForm({
+      shop: s.shop === "Unnamed vendor" ? "" : s.shop,
+      phone: s.phone === "Not provided" ? "" : s.phone,
+      city: s.city === "Not provided" ? "" : s.city,
+      cnic: "",
+      cnicChecked: false,
+      shopChecked: false,
+      billChecked: false,
+      notes: "",
+    });
+  };
+
+  const submitReview = (status: "approved" | "rejected") => {
+    if (!reviewSignup) return;
+    if (status === "approved" && !reviewForm.shop.trim()) {
+      toast.error("Add a shop name before approving.");
+      return;
+    }
+    signupDecision.mutate({
+      signup: {
+        ...reviewSignup,
+        shop: reviewForm.shop.trim() || reviewSignup.shop,
+        owner: reviewForm.shop.trim() || reviewSignup.owner,
+        phone: reviewForm.phone.trim() || "Not provided",
+        city: reviewForm.city.trim() || "Not provided",
+      },
+      status,
+    });
+    if (reviewForm.notes.trim()) {
+      log(`Review note for ${reviewSignup.email}: ${reviewForm.notes.trim()}`);
+    }
+    setReviewSignup(null);
+  };
+
   const pendingVendors =
     applications.filter((a) => a.status === "pending").length + pendingSignups.length;
   const pendingListings = listings.filter((l) => l.status === "pending").length;
