@@ -62,21 +62,43 @@ export const listVendorSignups = createServerFn({ method: "GET" })
 /** Approve or reject a real vendor sign-up and sync their vendor role. */
 export const decideVendorSignup = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((input: { userId: string; status: "approved" | "rejected" }) => {
-    const userId = String(input?.userId ?? "").trim();
-    if (!userId) throw new Error("Vendor account is required.");
-    if (input?.status !== "approved" && input?.status !== "rejected") {
-      throw new Error("Decision must be approved or rejected.");
-    }
-    return { userId, status: input.status };
-  })
+  .inputValidator(
+    (input: {
+      userId: string;
+      status: "approved" | "rejected";
+      shop?: string;
+      phone?: string;
+      city?: string;
+    }) => {
+      const userId = String(input?.userId ?? "").trim();
+      if (!userId) throw new Error("Vendor account is required.");
+      if (input?.status !== "approved" && input?.status !== "rejected") {
+        throw new Error("Decision must be approved or rejected.");
+      }
+      const clean = (v: unknown) => String(v ?? "").trim().slice(0, 120);
+      const shop = clean(input.shop);
+      const phone = clean(input.phone);
+      const city = clean(input.city);
+      if (input.status === "approved" && !shop) {
+        throw new Error("Shop name is required before approving a vendor.");
+      }
+      return { userId, status: input.status, shop, phone, city };
+    },
+  )
   .handler(async ({ data, context }) => {
     await assertAdmin(context as any);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
 
+    const update = {
+      vendor_status: data.status,
+      ...(data.shop ? { display_name: data.shop } : {}),
+      ...(data.phone ? { phone: data.phone } : {}),
+      ...(data.city ? { city: data.city } : {}),
+    };
+
     const { error: profileError } = await supabaseAdmin
       .from("profiles")
-      .update({ vendor_status: data.status })
+      .update(update)
       .eq("id", data.userId);
     if (profileError) throw new Error(profileError.message);
 
