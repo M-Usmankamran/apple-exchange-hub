@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { AvatarUpload } from "@/components/site/AvatarUpload";
+import { CnicUpload } from "@/components/site/CnicUpload";
 
 export const Route = createFileRoute("/profile/vendor")({
   head: () => ({
@@ -48,6 +49,14 @@ function VendorProfile() {
           </Badge>
         </div>
         <AvatarUpload role="vendor" name="Apex Apple Store" className="mt-5" />
+      </section>
+
+      <section className="mt-6 rounded-3xl border bg-card p-6 shadow-sm">
+        <h2 className="text-lg font-semibold">CNIC verification</h2>
+        <p className="mt-1 text-sm text-muted-foreground">
+          A clear CNIC image is required before your vendor verification can be completed.
+        </p>
+        <CnicUpload accountType="vendor" className="mt-5" />
       </section>
 
       <section className="mt-6 grid gap-4 rounded-3xl border bg-card p-6 shadow-sm sm:grid-cols-2">

@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { AvatarUpload } from "@/components/site/AvatarUpload";
+import { CnicUpload } from "@/components/site/CnicUpload";
 import { useAuth } from "@/hooks/use-auth";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -126,6 +127,14 @@ function UserProfile() {
       <section className="mt-8 rounded-3xl border bg-card p-6 shadow-sm">
         <h2 className="text-lg font-semibold">Profile photo</h2>
         <AvatarUpload role="user" name={heading} className="mt-5" />
+      </section>
+
+      <section className="mt-6 rounded-3xl border bg-card p-6 shadow-sm">
+        <h2 className="text-lg font-semibold">Upload CNIC</h2>
+        <p className="mt-1 text-sm text-muted-foreground">
+          Verify your identity to unlock higher-value purchases and exchanges.
+        </p>
+        <CnicUpload accountType="buyer" className="mt-5" />
       </section>
 
       <form
