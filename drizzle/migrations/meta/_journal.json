@@ -8,6 +8,13 @@
       "when": 1789746489623,
       "tag": "0000_cnic_verifications",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1789746546380,
+      "tag": "0001_cnic_guard_allow_service_role",
+      "breakpoints": true
     }
   ]
 }
