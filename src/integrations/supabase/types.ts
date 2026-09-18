@@ -163,6 +163,48 @@ export type Database = {
         }
         Relationships: []
       }
+      cnic_verifications: {
+        Row: {
+          account_type: string
+          cnic_number: string | null
+          created_at: string
+          document_path: string
+          rejection_reason: string | null
+          reviewed_at: string | null
+          reviewed_by: string | null
+          status: string
+          submitted_at: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          account_type?: string
+          cnic_number?: string | null
+          created_at?: string
+          document_path: string
+          rejection_reason?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string
+          submitted_at?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          account_type?: string
+          cnic_number?: string | null
+          created_at?: string
+          document_path?: string
+          rejection_reason?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string
+          submitted_at?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       order_items: {
         Row: {
           created_at: string
