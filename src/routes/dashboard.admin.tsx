@@ -1,4 +1,5 @@
 import { AuthGate } from "@/components/site/AuthGate";
+import { CnicReviewPanel } from "@/components/site/CnicReviewPanel";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import {
@@ -650,6 +651,7 @@ function AdminDashboard() {
           <TabsTrigger value="orders">Orders &amp; payments</TabsTrigger>
           <TabsTrigger value="complaints">Complaints</TabsTrigger>
           <TabsTrigger value="analytics">Analytics</TabsTrigger>
+          <TabsTrigger value="cnic">CNIC verification</TabsTrigger>
           <TabsTrigger value="audit">Audit log</TabsTrigger>
         </TabsList>
 
@@ -1334,6 +1336,11 @@ function AdminDashboard() {
               </div>
             </div>
           </div>
+        </TabsContent>
+
+        {/* CNIC identity verification */}
+        <TabsContent value="cnic" className="mt-6">
+          <CnicReviewPanel onLog={log} />
         </TabsContent>
 
       </Tabs>
