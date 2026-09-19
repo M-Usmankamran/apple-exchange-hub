@@ -213,3 +213,34 @@ export function CnicReviewPanel({ onLog }: { onLog?: (message: string) => void }
     </div>
   );
 }
+
+function DocumentPane({
+  label,
+  url,
+  error,
+}: {
+  label: string;
+  url: string | null;
+  error: string | null;
+}) {
+  return (
+    <div className="rounded-xl border bg-secondary/40 p-3">
+      <p className="mb-2 text-xs font-medium text-muted-foreground">{label} of CNIC</p>
+      <div className="grid min-h-40 place-items-center">
+        {url ? (
+          <img
+            src={url}
+            alt={`Submitted CNIC ${label}`}
+            className="max-h-64 w-full rounded-lg object-contain"
+          />
+        ) : error ? (
+          <span className="text-center text-xs text-destructive">{error}</span>
+        ) : (
+          <span className="flex items-center gap-2 text-sm text-muted-foreground">
+            <Loader2 className="size-4 animate-spin" /> Opening…
+          </span>
+        )}
+      </div>
+    </div>
+  );
+}
