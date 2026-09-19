@@ -28,6 +28,8 @@ export function CnicReviewPanel({ onLog }: { onLog?: (message: string) => void }
 
   const [active, setActive] = useState<CnicSubmission | null>(null);
   const [docUrl, setDocUrl] = useState<string | null>(null);
+  const [backUrl, setBackUrl] = useState<string | null>(null);
+  const [backError, setBackError] = useState<string | null>(null);
   const [reason, setReason] = useState("");
 
   const submissions = useQuery({
@@ -39,11 +41,21 @@ export function CnicReviewPanel({ onLog }: { onLog?: (message: string) => void }
     setActive(s);
     setReason(s.rejectionReason ?? "");
     setDocUrl(null);
+    setBackUrl(null);
+    setBackError(null);
     try {
-      const { url } = await fetchUrl({ data: { userId: s.userId } });
+      const { url } = await fetchUrl({ data: { userId: s.userId, side: "front" } });
       setDocUrl(url);
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Could not open that document.");
+    }
+    try {
+      const { url } = await fetchUrl({ data: { userId: s.userId, side: "back" } });
+      setBackUrl(url);
+    } catch (error) {
+      setBackError(
+        error instanceof Error ? error.message : "Could not open the back picture.",
+      );
     }
   };
 
