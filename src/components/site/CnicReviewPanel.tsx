@@ -168,18 +168,9 @@ export function CnicReviewPanel({ onLog }: { onLog?: (message: string) => void }
               </p>
             </div>
 
-            <div className="grid min-h-48 place-items-center rounded-xl border bg-secondary/40 p-3">
-              {docUrl ? (
-                <img
-                  src={docUrl}
-                  alt="Submitted CNIC document"
-                  className="max-h-72 w-full rounded-lg object-contain"
-                />
-              ) : (
-                <span className="flex items-center gap-2 text-sm text-muted-foreground">
-                  <Loader2 className="size-4 animate-spin" /> Opening secure document…
-                </span>
-              )}
+            <div className="grid gap-3 sm:grid-cols-2">
+              <DocumentPane label="Front" url={docUrl} error={null} />
+              <DocumentPane label="Back" url={backUrl} error={backError} />
             </div>
 
             <div>
