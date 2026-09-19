@@ -168,6 +168,7 @@ export type Database = {
           account_type: string
           cnic_number: string | null
           created_at: string
+          document_back_path: string | null
           document_path: string
           rejection_reason: string | null
           reviewed_at: string | null
@@ -181,6 +182,7 @@ export type Database = {
           account_type?: string
           cnic_number?: string | null
           created_at?: string
+          document_back_path?: string | null
           document_path: string
           rejection_reason?: string | null
           reviewed_at?: string | null
@@ -194,6 +196,7 @@ export type Database = {
           account_type?: string
           cnic_number?: string | null
           created_at?: string
+          document_back_path?: string | null
           document_path?: string
           rejection_reason?: string | null
           reviewed_at?: string | null
