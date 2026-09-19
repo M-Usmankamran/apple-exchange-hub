@@ -85,10 +85,11 @@ export const listCnicSubmissions = createServerFn({ method: "GET" })
  */
 export const getCnicDocumentUrl = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((input: { userId: string }) => {
+  .inputValidator((input: { userId: string; side?: "front" | "back" }) => {
     const userId = String(input?.userId ?? "").trim();
     if (!userId) throw new Error("Account is required.");
-    return { userId };
+    const side = input?.side === "back" ? "back" : "front";
+    return { userId, side };
   })
   .handler(async ({ data, context }): Promise<{ url: string }> => {
     await assertAdmin(context as any);
@@ -96,15 +97,22 @@ export const getCnicDocumentUrl = createServerFn({ method: "POST" })
 
     const { data: row, error } = await supabaseAdmin
       .from("cnic_verifications")
-      .select("document_path")
+      .select("document_path, document_back_path")
       .eq("user_id", data.userId)
       .maybeSingle();
     if (error) throw new Error(error.message);
-    if (!row?.document_path) throw new Error("No document on file for this account.");
+    const path = data.side === "back" ? row?.document_back_path : row?.document_path;
+    if (!path) {
+      throw new Error(
+        data.side === "back"
+          ? "No back picture on file for this account."
+          : "No document on file for this account.",
+      );
+    }
 
     const { data: signed, error: signError } = await supabaseAdmin.storage
       .from("cnic-documents")
-      .createSignedUrl(row.document_path, 60);
+      .createSignedUrl(path, 60);
     if (signError || !signed?.signedUrl) {
       throw new Error(signError?.message ?? "Could not open that document.");
     }

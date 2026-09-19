@@ -28,6 +28,8 @@ export function CnicReviewPanel({ onLog }: { onLog?: (message: string) => void }
 
   const [active, setActive] = useState<CnicSubmission | null>(null);
   const [docUrl, setDocUrl] = useState<string | null>(null);
+  const [backUrl, setBackUrl] = useState<string | null>(null);
+  const [backError, setBackError] = useState<string | null>(null);
   const [reason, setReason] = useState("");
 
   const submissions = useQuery({
@@ -39,11 +41,21 @@ export function CnicReviewPanel({ onLog }: { onLog?: (message: string) => void }
     setActive(s);
     setReason(s.rejectionReason ?? "");
     setDocUrl(null);
+    setBackUrl(null);
+    setBackError(null);
     try {
-      const { url } = await fetchUrl({ data: { userId: s.userId } });
+      const { url } = await fetchUrl({ data: { userId: s.userId, side: "front" } });
       setDocUrl(url);
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Could not open that document.");
+    }
+    try {
+      const { url } = await fetchUrl({ data: { userId: s.userId, side: "back" } });
+      setBackUrl(url);
+    } catch (error) {
+      setBackError(
+        error instanceof Error ? error.message : "Could not open the back picture.",
+      );
     }
   };
 
@@ -156,18 +168,9 @@ export function CnicReviewPanel({ onLog }: { onLog?: (message: string) => void }
               </p>
             </div>
 
-            <div className="grid min-h-48 place-items-center rounded-xl border bg-secondary/40 p-3">
-              {docUrl ? (
-                <img
-                  src={docUrl}
-                  alt="Submitted CNIC document"
-                  className="max-h-72 w-full rounded-lg object-contain"
-                />
-              ) : (
-                <span className="flex items-center gap-2 text-sm text-muted-foreground">
-                  <Loader2 className="size-4 animate-spin" /> Opening secure document…
-                </span>
-              )}
+            <div className="grid gap-3 sm:grid-cols-2">
+              <DocumentPane label="Front" url={docUrl} error={null} />
+              <DocumentPane label="Back" url={backUrl} error={backError} />
             </div>
 
             <div>
@@ -207,6 +210,37 @@ export function CnicReviewPanel({ onLog }: { onLog?: (message: string) => void }
           </div>
         </DialogContent>
       </Dialog>
+    </div>
+  );
+}
+
+function DocumentPane({
+  label,
+  url,
+  error,
+}: {
+  label: string;
+  url: string | null;
+  error: string | null;
+}) {
+  return (
+    <div className="rounded-xl border bg-secondary/40 p-3">
+      <p className="mb-2 text-xs font-medium text-muted-foreground">{label} of CNIC</p>
+      <div className="grid min-h-40 place-items-center">
+        {url ? (
+          <img
+            src={url}
+            alt={`Submitted CNIC ${label}`}
+            className="max-h-64 w-full rounded-lg object-contain"
+          />
+        ) : error ? (
+          <span className="text-center text-xs text-destructive">{error}</span>
+        ) : (
+          <span className="flex items-center gap-2 text-sm text-muted-foreground">
+            <Loader2 className="size-4 animate-spin" /> Opening…
+          </span>
+        )}
+      </div>
     </div>
   );
 }

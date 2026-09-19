@@ -19,6 +19,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { conditions, formatPrice, storageOptions, vendors } from "@/lib/marketplace-data";
+import { iphoneModels } from "@/lib/form-options";
 
 export const Route = createFileRoute("/sell")({
   head: () => ({
@@ -102,15 +103,19 @@ function SellPage() {
             <h2 className="font-semibold">Device details</h2>
             <div className="mt-4 grid gap-4 sm:grid-cols-2">
               <div className="sm:col-span-2">
-                <Label htmlFor="model">Model</Label>
-                <Input
-                  id="model"
-                  className="mt-1.5"
-                  maxLength={80}
-                  placeholder="iPhone 13 Pro"
-                  value={form.model}
-                  onChange={(e) => setForm({ ...form, model: e.target.value })}
-                />
+                <Label>Model</Label>
+                <Select value={form.model} onValueChange={(v) => setForm({ ...form, model: v })}>
+                  <SelectTrigger className="mt-1.5">
+                    <SelectValue placeholder="Select your iPhone model" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {iphoneModels.map((m) => (
+                      <SelectItem key={m} value={m}>
+                        {m}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
               <div>
                 <Label>Storage</Label>

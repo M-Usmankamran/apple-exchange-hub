@@ -36,6 +36,7 @@ import {
   timeLeft,
   type Auction,
 } from "@/lib/bidding";
+import { iphoneModels, pkCities, storageSizes } from "@/lib/form-options";
 
 export const Route = createFileRoute("/auctions")({
   head: () => ({
@@ -328,6 +329,21 @@ function NewAuctionDialog({ vendorId, vendorName }: { vendorId: string; vendorNa
             />
           </div>
           <div className="grid grid-cols-2 gap-3">
+            <div className="space-y-1.5 col-span-2">
+              <Label>Model</Label>
+              <Select value={form.model} onValueChange={(v) => set("model", v)}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select a model" />
+                </SelectTrigger>
+                <SelectContent>
+                  {iphoneModels.map((m) => (
+                    <SelectItem key={m} value={m}>
+                      {m}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
             <div className="space-y-1.5">
               <Label>Device</Label>
               <Select value={form.category} onValueChange={(v) => set("category", v)}>
@@ -359,22 +375,34 @@ function NewAuctionDialog({ vendorId, vendorName }: { vendorId: string; vendorNa
               </Select>
             </div>
             <div className="space-y-1.5">
-              <Label htmlFor="a-storage">Storage</Label>
-              <Input
-                id="a-storage"
-                value={form.storage}
-                maxLength={20}
-                onChange={(e) => set("storage", e.target.value)}
-              />
+              <Label>Storage</Label>
+              <Select value={form.storage} onValueChange={(v) => set("storage", v)}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select storage" />
+                </SelectTrigger>
+                <SelectContent>
+                  {storageSizes.map((s) => (
+                    <SelectItem key={s} value={s}>
+                      {s}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
             <div className="space-y-1.5">
-              <Label htmlFor="a-city">City</Label>
-              <Input
-                id="a-city"
-                value={form.city}
-                maxLength={60}
-                onChange={(e) => set("city", e.target.value)}
-              />
+              <Label>City</Label>
+              <Select value={form.city} onValueChange={(v) => set("city", v)}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select city" />
+                </SelectTrigger>
+                <SelectContent>
+                  {pkCities.map((c) => (
+                    <SelectItem key={c} value={c}>
+                      {c}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
             <div className="space-y-1.5">
               <Label htmlFor="a-start">Start price (PKR)</Label>

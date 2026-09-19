@@ -52,7 +52,7 @@ export const categories = [
 
 export const conditions: Condition[] = ["New", "Like New", "Excellent", "Good", "Fair"];
 
-export const storageOptions = ["64GB", "128GB", "256GB", "512GB", "1TB"];
+export const storageOptions = ["128GB", "256GB", "512GB", "1TB", "2TB"];
 
 export const vendors: Vendor[] = [
   {

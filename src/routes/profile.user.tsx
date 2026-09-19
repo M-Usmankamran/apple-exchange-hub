@@ -11,6 +11,14 @@ import { AvatarUpload } from "@/components/site/AvatarUpload";
 import { CnicUpload } from "@/components/site/CnicUpload";
 import { useAuth } from "@/hooks/use-auth";
 import { supabase } from "@/integrations/supabase/client";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { MAX_PHONE_LENGTH, formatPhone, pkCities } from "@/lib/form-options";
 
 export const Route = createFileRoute("/profile/user")({
   head: () => ({
@@ -155,18 +163,32 @@ function UserProfile() {
           <Label htmlFor="u-email">Email</Label>
           <Input id="u-email" type="email" value={user?.email ?? ""} readOnly disabled />
         </div>
-        <Field
-          id="u-phone"
-          label="Mobile number"
-          value={form.phone}
-          onChange={(v) => setForm((f) => ({ ...f, phone: v }))}
-        />
-        <Field
-          id="u-city"
-          label="City"
-          value={form.city}
-          onChange={(v) => setForm((f) => ({ ...f, city: v }))}
-        />
+        <div className="space-y-2">
+          <Label htmlFor="u-phone">Mobile number</Label>
+          <Input
+            id="u-phone"
+            inputMode="tel"
+            maxLength={MAX_PHONE_LENGTH}
+            placeholder="+92 300 1234567"
+            value={form.phone}
+            onChange={(e) => setForm((f) => ({ ...f, phone: formatPhone(e.target.value) }))}
+          />
+        </div>
+        <div className="space-y-2">
+          <Label>City</Label>
+          <Select value={form.city} onValueChange={(v) => setForm((f) => ({ ...f, city: v }))}>
+            <SelectTrigger>
+              <SelectValue placeholder="Select city" />
+            </SelectTrigger>
+            <SelectContent>
+              {pkCities.map((c) => (
+                <SelectItem key={c} value={c}>
+                  {c}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
         <div className="sm:col-span-2">
           <Field
             id="u-address"

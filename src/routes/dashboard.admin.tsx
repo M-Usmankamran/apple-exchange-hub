@@ -1,5 +1,12 @@
 import { AuthGate } from "@/components/site/AuthGate";
 import { CnicReviewPanel } from "@/components/site/CnicReviewPanel";
+import {
+  MAX_CNIC_LENGTH,
+  MAX_PHONE_LENGTH,
+  formatCnic,
+  formatPhone,
+  pkCities,
+} from "@/lib/form-options";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import {
@@ -748,17 +755,31 @@ function AdminDashboard() {
                     </label>
                     <Input
                       value={reviewForm.phone}
-                      onChange={(e) => setReviewForm((f) => ({ ...f, phone: e.target.value }))}
+                      inputMode="tel"
+                      maxLength={MAX_PHONE_LENGTH}
+                      onChange={(e) =>
+                        setReviewForm((f) => ({ ...f, phone: formatPhone(e.target.value) }))
+                      }
                       placeholder="+92 300 1234567"
                     />
                   </div>
                   <div>
                     <label className="text-xs font-medium text-muted-foreground">City</label>
-                    <Input
+                    <Select
                       value={reviewForm.city}
-                      onChange={(e) => setReviewForm((f) => ({ ...f, city: e.target.value }))}
-                      placeholder="Lahore"
-                    />
+                      onValueChange={(v) => setReviewForm((f) => ({ ...f, city: v }))}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select city" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {pkCities.map((c) => (
+                          <SelectItem key={c} value={c}>
+                            {c}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                   </div>
                   <div className="sm:col-span-2">
                     <label className="text-xs font-medium text-muted-foreground">
@@ -766,7 +787,11 @@ function AdminDashboard() {
                     </label>
                     <Input
                       value={reviewForm.cnic}
-                      onChange={(e) => setReviewForm((f) => ({ ...f, cnic: e.target.value }))}
+                      inputMode="numeric"
+                      maxLength={MAX_CNIC_LENGTH}
+                      onChange={(e) =>
+                        setReviewForm((f) => ({ ...f, cnic: formatCnic(e.target.value) }))
+                      }
                       placeholder="35202-1234567-8"
                     />
                   </div>

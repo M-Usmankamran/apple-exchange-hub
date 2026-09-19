@@ -7,6 +7,14 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { AvatarUpload } from "@/components/site/AvatarUpload";
 import { CnicUpload } from "@/components/site/CnicUpload";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { MAX_CNIC_LENGTH, MAX_PHONE_LENGTH, pkCities } from "@/lib/form-options";
 
 export const Route = createFileRoute("/profile/vendor")({
   head: () => ({
@@ -63,9 +71,33 @@ function VendorProfile() {
         <h2 className="text-lg font-semibold sm:col-span-2">Shop details</h2>
         <Field id="v-shop" label="Shop name" defaultValue="Apex Apple Store" />
         <Field id="v-owner" label="Owner name" defaultValue="Bilal Ahmed" />
-        <Field id="v-cnic" label="CNIC number" defaultValue="35202-1234567-1" />
-        <Field id="v-phone" label="Shop phone" defaultValue="+92 321 7654321" />
-        <Field id="v-city" label="City" defaultValue="Lahore" />
+        <Field
+          id="v-cnic"
+          label="CNIC number"
+          defaultValue="35202-1234567-1"
+          maxLength={MAX_CNIC_LENGTH}
+        />
+        <Field
+          id="v-phone"
+          label="Shop phone"
+          defaultValue="+92 321 7654321"
+          maxLength={MAX_PHONE_LENGTH}
+        />
+        <div className="space-y-2">
+          <Label>City</Label>
+          <Select defaultValue="Lahore">
+            <SelectTrigger>
+              <SelectValue placeholder="Select city" />
+            </SelectTrigger>
+            <SelectContent>
+              {pkCities.map((c) => (
+                <SelectItem key={c} value={c}>
+                  {c}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
         <Field id="v-hours" label="Pickup hours" defaultValue="11:00 — 21:00" />
         <div className="space-y-2 sm:col-span-2">
           <Label htmlFor="v-about">Shop description</Label>
@@ -95,15 +127,17 @@ function Field({
   id,
   label,
   defaultValue,
+  maxLength,
 }: {
   id: string;
   label: string;
   defaultValue?: string;
+  maxLength?: number;
 }) {
   return (
     <div className="space-y-2">
       <Label htmlFor={id}>{label}</Label>
-      <Input id={id} defaultValue={defaultValue} />
+      <Input id={id} defaultValue={defaultValue} maxLength={maxLength} />
     </div>
   );
 }
