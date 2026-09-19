@@ -372,23 +372,34 @@ function NewRequestDialog({ buyerId, buyerName }: { buyerId: string; buyerName: 
               </Select>
             </div>
             <div className="space-y-1.5">
-              <Label htmlFor="r-model">Model</Label>
-              <Input
-                id="r-model"
-                value={form.model}
-                maxLength={80}
-                onChange={(e) => set("model", e.target.value)}
-                placeholder="iPhone 14"
-              />
+              <Label>Model</Label>
+              <Select value={form.model} onValueChange={(v) => set("model", v)}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select a model" />
+                </SelectTrigger>
+                <SelectContent>
+                  {iphoneModels.map((m) => (
+                    <SelectItem key={m} value={m}>
+                      {m}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
             <div className="space-y-1.5">
-              <Label htmlFor="r-storage">Storage</Label>
-              <Input
-                id="r-storage"
-                value={form.storage}
-                maxLength={20}
-                onChange={(e) => set("storage", e.target.value)}
-              />
+              <Label>Storage</Label>
+              <Select value={form.storage} onValueChange={(v) => set("storage", v)}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select storage" />
+                </SelectTrigger>
+                <SelectContent>
+                  {storageSizes.map((s) => (
+                    <SelectItem key={s} value={s}>
+                      {s}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
             <div className="space-y-1.5">
               <Label htmlFor="r-budget">Max budget (PKR)</Label>
@@ -400,13 +411,19 @@ function NewRequestDialog({ buyerId, buyerName }: { buyerId: string; buyerName: 
               />
             </div>
             <div className="space-y-1.5">
-              <Label htmlFor="r-city">City</Label>
-              <Input
-                id="r-city"
-                value={form.city}
-                maxLength={60}
-                onChange={(e) => set("city", e.target.value)}
-              />
+              <Label>City</Label>
+              <Select value={form.city} onValueChange={(v) => set("city", v)}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select city" />
+                </SelectTrigger>
+                <SelectContent>
+                  {pkCities.map((c) => (
+                    <SelectItem key={c} value={c}>
+                      {c}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
           </div>
           <div className="space-y-1.5">
