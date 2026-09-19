@@ -21,9 +21,9 @@ import {
   formatPrice,
   products,
   storageOptions,
-
   vendors,
 } from "@/lib/marketplace-data";
+import { iphoneModels } from "@/lib/form-options";
 
 export const Route = createFileRoute("/exchange")({
   head: () => ({
