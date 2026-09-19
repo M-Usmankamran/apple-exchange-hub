@@ -329,6 +329,21 @@ function NewAuctionDialog({ vendorId, vendorName }: { vendorId: string; vendorNa
             />
           </div>
           <div className="grid grid-cols-2 gap-3">
+            <div className="space-y-1.5 col-span-2">
+              <Label>Model</Label>
+              <Select value={form.model} onValueChange={(v) => set("model", v)}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select a model" />
+                </SelectTrigger>
+                <SelectContent>
+                  {iphoneModels.map((m) => (
+                    <SelectItem key={m} value={m}>
+                      {m}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
             <div className="space-y-1.5">
               <Label>Device</Label>
               <Select value={form.category} onValueChange={(v) => set("category", v)}>
