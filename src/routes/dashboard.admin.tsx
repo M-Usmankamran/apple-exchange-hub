@@ -1,13 +1,6 @@
 import { AuthGate } from "@/components/site/AuthGate";
 import { CnicReviewPanel } from "@/components/site/CnicReviewPanel";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import {
   MAX_CNIC_LENGTH,
   MAX_PHONE_LENGTH,
   formatCnic,
