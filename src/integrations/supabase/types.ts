@@ -208,6 +208,74 @@ export type Database = {
         }
         Relationships: []
       }
+      conversations: {
+        Row: {
+          buyer_id: string
+          buyer_name: string
+          created_at: string
+          id: string
+          last_message_at: string
+          product_id: string | null
+          product_title: string | null
+          vendor_id: string
+          vendor_name: string
+        }
+        Insert: {
+          buyer_id: string
+          buyer_name?: string
+          created_at?: string
+          id?: string
+          last_message_at?: string
+          product_id?: string | null
+          product_title?: string | null
+          vendor_id: string
+          vendor_name?: string
+        }
+        Update: {
+          buyer_id?: string
+          buyer_name?: string
+          created_at?: string
+          id?: string
+          last_message_at?: string
+          product_id?: string | null
+          product_title?: string | null
+          vendor_id?: string
+          vendor_name?: string
+        }
+        Relationships: []
+      }
+      messages: {
+        Row: {
+          body: string
+          conversation_id: string
+          created_at: string
+          id: string
+          sender_id: string
+        }
+        Insert: {
+          body: string
+          conversation_id: string
+          created_at?: string
+          id?: string
+          sender_id: string
+        }
+        Update: {
+          body?: string
+          conversation_id?: string
+          created_at?: string
+          id?: string
+          sender_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "messages_conversation_id_fkey"
+            columns: ["conversation_id"]
+            isOneToOne: false
+            referencedRelation: "conversations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       order_items: {
         Row: {
           created_at: string
@@ -431,6 +499,63 @@ export type Database = {
           id?: string
           role?: Database["public"]["Enums"]["app_role"]
           user_id?: string
+        }
+        Relationships: []
+      }
+      vendor_products: {
+        Row: {
+          category: string
+          city: string
+          condition: string
+          created_at: string
+          description: string | null
+          id: string
+          image_url: string | null
+          model: string | null
+          price: number
+          status: string
+          stock: number
+          storage: string | null
+          title: string
+          updated_at: string
+          vendor_id: string
+          vendor_name: string
+        }
+        Insert: {
+          category?: string
+          city?: string
+          condition?: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          model?: string | null
+          price: number
+          status?: string
+          stock?: number
+          storage?: string | null
+          title: string
+          updated_at?: string
+          vendor_id: string
+          vendor_name?: string
+        }
+        Update: {
+          category?: string
+          city?: string
+          condition?: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          model?: string | null
+          price?: number
+          status?: string
+          stock?: number
+          storage?: string | null
+          title?: string
+          updated_at?: string
+          vendor_id?: string
+          vendor_name?: string
         }
         Relationships: []
       }

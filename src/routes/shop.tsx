@@ -14,6 +14,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { ProductCard } from "@/components/site/ProductCard";
+import { VendorProductsGrid } from "@/components/site/VendorProductsGrid";
 import {
   categories,
   conditions,
@@ -224,6 +225,7 @@ function Shop() {
         </aside>
 
         <div>
+          <VendorProductsGrid />
           {results.length === 0 ? (
             <div className="rounded-2xl border bg-card p-10 text-center text-sm text-muted-foreground">
               No listings match these filters yet.
