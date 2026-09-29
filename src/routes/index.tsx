@@ -18,6 +18,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { ProductCard } from "@/components/site/ProductCard";
+import { VendorProductsGrid } from "@/components/site/VendorProductsGrid";
 import {
   categories,
   formatPrice,
@@ -205,6 +206,7 @@ function Home() {
             <Link to="/shop">View all</Link>
           </Button>
         </div>
+        <VendorProductsGrid />
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {products.slice(0, 4).map((p) => (
             <ProductCard key={p.id} product={p} />

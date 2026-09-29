@@ -45,10 +45,11 @@ export function AddProductDialog({ children }: { children: ReactNode }) {
   const [condition, setCondition] = useState("");
   const [pics, setPics] = useState<string[]>([]);
   const [price, setPrice] = useState("");
+  const [stock, setStock] = useState("1");
   const [description, setDescription] = useState("");
   const [saving, setSaving] = useState(false);
 
-  const reset = () => { setPhone(""); setStorage(""); setCondition(""); setPics([]); setPrice(""); setDescription(""); };
+  const reset = () => { setPhone(""); setStorage(""); setCondition(""); setPics([]); setPrice(""); setStock("1"); setDescription(""); };
 
   async function addPics(files: FileList | null) {
     if (!files) return;
@@ -65,9 +66,11 @@ export function AddProductDialog({ children }: { children: ReactNode }) {
     e.preventDefault();
     if (!user) return;
     const amount = Number(price);
+    const qty = Number(stock);
     if (!phone || !storage || !condition) return toast.error("Choose the phone, storage and condition");
     if (pics.length === 0) return toast.error("Add at least one picture of the phone");
     if (!(amount > 0)) return toast.error("Enter a valid price");
+    if (!(qty >= 1)) return toast.error("Enter a valid stock quantity");
     if (!description.trim()) return toast.error("Add a description");
     setSaving(true);
     const { data: prof } = await supabase.from("profiles").select("shop_name, city").eq("id", user.id).maybeSingle();
@@ -81,7 +84,7 @@ export function AddProductDialog({ children }: { children: ReactNode }) {
       condition,
       city: prof?.city || "Lahore",
       price: amount,
-      stock: 1,
+      stock: qty,
       image_url: pics[0] ?? null,
       image_urls: pics,
       description: description.trim().slice(0, 1000),
@@ -133,9 +136,15 @@ export function AddProductDialog({ children }: { children: ReactNode }) {
               )}
             </div>
           </div>
-          <div className="space-y-2">
-            <Label>Price (PKR)</Label>
-            <Input inputMode="numeric" value={price} placeholder="350000" onChange={(e) => setPrice(e.target.value.replace(/\D/g, "").slice(0, 9))} />
+          <div className="grid grid-cols-2 gap-3">
+            <div className="space-y-2">
+              <Label>Price (PKR)</Label>
+              <Input inputMode="numeric" value={price} placeholder="350000" onChange={(e) => setPrice(e.target.value.replace(/\D/g, "").slice(0, 9))} />
+            </div>
+            <div className="space-y-2">
+              <Label>Stock (units)</Label>
+              <Input inputMode="numeric" value={stock} placeholder="1" onChange={(e) => setStock(e.target.value.replace(/\D/g, "").slice(0, 4))} />
+            </div>
           </div>
           <div className="space-y-2">
             <Label>Description</Label>
