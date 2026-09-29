@@ -32,6 +32,7 @@ export function VendorProductsGrid() {
               {[p.storage, p.condition, p.city].filter(Boolean).join(" · ")} · by {p.vendor_name}
             </p>
             <p className="mt-2 font-semibold">{formatPrice(Number(p.price))}</p>
+            <p className="text-xs text-muted-foreground">{p.stock > 0 ? `${p.stock} in stock` : "Out of stock"}</p>
             <Button asChild size="sm" variant="secondary" className="mt-3">
               <Link to="/messages" search={{ product: p.id }}>
                 <MessageCircle className="size-4" /> Message vendor
