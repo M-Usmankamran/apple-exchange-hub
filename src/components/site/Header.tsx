@@ -53,7 +53,7 @@ function ThemeToggle() {
 export function Header() {
   const { count } = useCart();
   const [open, setOpen] = useState(false);
-  const { user, displayName, roles, isAdmin, isVendor } = useAuth();
+  const { user, displayName, isAdmin, isVendor } = useAuth();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
