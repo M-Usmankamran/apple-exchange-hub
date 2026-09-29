@@ -36,6 +36,13 @@
       "when": 1790714886034,
       "tag": "0004_vendor_products_and_messaging",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1790718404964,
+      "tag": "0005_product_images",
+      "breakpoints": true
     }
   ]
 }
