@@ -46,12 +46,26 @@ const conds = ["New", "Like New", "Excellent", "Good", "Fair"];
 
 const empty = { title: "", category: "iphone", model: "", storage: "128GB", condition: "New", city: "Lahore", price: "", stock: "1", image_url: "", description: "" };
 
+type ProductRow = {
+  id: string;
+  title: string;
+  category: string;
+  model: string | null;
+  storage: string | null;
+  condition: string;
+  city: string;
+  price: number;
+  stock: number;
+  image_url: string | null;
+  description: string | null;
+};
+
 function VendorProducts() {
   const { user, displayName } = useAuth();
   const qc = useQueryClient();
   const [f, setF] = useState(empty);
   const [saving, setSaving] = useState(false);
-  const [editing, setEditing] = useState<(typeof list.data extends (infer T)[] | undefined ? T : never) | null>(null);
+  const [editing, setEditing] = useState<ProductRow | null>(null);
   const [ef, setEf] = useState(empty);
   const [updating, setUpdating] = useState(false);
   const set = (k: keyof typeof empty) => (v: string) => setF((s) => ({ ...s, [k]: v }));
@@ -95,7 +109,7 @@ function VendorProducts() {
     qc.invalidateQueries({ queryKey: ["vendor-products"] });
   }
 
-  function openEdit(p: NonNullable<typeof list.data>[number]) {
+  function openEdit(p: ProductRow) {
     setEditing(p);
     setEf({
       title: p.title,
