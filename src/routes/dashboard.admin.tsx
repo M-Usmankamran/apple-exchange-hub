@@ -57,7 +57,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { formatPrice, products, vendors } from "@/lib/marketplace-data";
+import { formatPrice } from "@/lib/marketplace-data";
 import { approveVendorStore, removeVendorStore } from "@/lib/vendor-directory";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
@@ -66,6 +66,18 @@ import {
   listVendorSignups,
   type VendorSignup,
 } from "@/lib/vendor-approvals.functions";
+import {
+  addAudit,
+  decideListing as decideListingSrv,
+  listAllListings,
+  listAllOrders,
+  listAudit,
+  listComplaints,
+  listUsers,
+  resolveComplaint as resolveComplaintSrv,
+  setUserBlocked,
+  updateOrder,
+} from "@/lib/admin.functions";
 
 import {
   auditCategories,
@@ -73,7 +85,6 @@ import {
   auditToCsv,
   downloadCsv,
   formatAuditTime,
-  initialAudit,
   type AuditCategory,
   type AuditEntry,
   type AuditSeverity,
@@ -674,48 +685,14 @@ function AdminDashboard() {
           </Dialog>
 
 
-          <h2 className="pt-2 text-lg font-semibold">Sample applications</h2>
-          {applications.map((a) => (
-            <div key={a.id} className="rounded-2xl border bg-card p-5 shadow-sm">
-              <div className="flex flex-wrap items-start justify-between gap-4">
-                <div>
-                  <div className="flex items-center gap-2">
-                    <h3 className="text-lg font-semibold">{a.shop}</h3>
-                    <StatusBadge status={a.status} />
-                  </div>
-                  <p className="mt-1 text-sm text-muted-foreground">
-                    {a.owner} · {a.city} · {a.phone}
-                  </p>
-                  <p className="mt-1 text-xs text-muted-foreground">
-                    CNIC {a.cnic} · submitted {a.submitted}
-                  </p>
-                </div>
-                {a.status === "pending" && (
-                  <div className="flex gap-2">
-                    <Button size="sm" onClick={() => decideVendor(a.id, "approved")}>
-                      <CheckCircle2 className="mr-2 h-4 w-4" /> Approve
-                    </Button>
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={() => decideVendor(a.id, "rejected")}
-                    >
-                      <XCircle className="mr-2 h-4 w-4" /> Reject
-                    </Button>
-                  </div>
-                )}
-              </div>
-              <div className="mt-4 flex flex-wrap gap-2">
-                <DocChip label="CNIC scan" ok={a.docs.cnic} />
-                <DocChip label="Shop photo" ok={a.docs.shopPhoto} />
-                <DocChip label="Utility bill" ok={a.docs.utilityBill} />
-              </div>
-            </div>
-          ))}
         </TabsContent>
 
         {/* Listing / image review */}
         <TabsContent value="listings" className="mt-6 space-y-4">
+          {!listingsQ.isLoading && listings.length === 0 && (
+            <p className="text-sm text-muted-foreground">No vendor listings yet.</p>
+          )}
+          {listingsQ.isError && <p className="text-sm text-destructive">{errMsg(listingsQ.error)}</p>}
           {listings.map((l) => (
             <div key={l.id} className="rounded-2xl border bg-card p-5 shadow-sm">
               <div className="flex flex-wrap items-start justify-between gap-4">
@@ -740,25 +717,27 @@ function AdminDashboard() {
                     </ul>
                   ) : (
                     <p className="mt-3 flex items-center gap-2 text-xs text-muted-foreground">
-                      <BadgeCheck className="h-3.5 w-3.5" /> Image checks passed — originals
-                      match the device serial.
+                      <BadgeCheck className="h-3.5 w-3.5" /> Photos, description and stock look complete.
                     </p>
                   )}
                 </div>
-                {l.status === "pending" && (
-                  <div className="flex gap-2">
-                    <Button size="sm" onClick={() => decideListing(l.id, "approved")}>
+                <div className="flex gap-2">
+                  {l.status !== "approved" && (
+                    <Button size="sm" disabled={listingMut.isPending} onClick={() => decideListing(l.id, "approved")}>
                       Publish
                     </Button>
+                  )}
+                  {l.status !== "rejected" && (
                     <Button
                       size="sm"
                       variant="outline"
+                      disabled={listingMut.isPending}
                       onClick={() => decideListing(l.id, "rejected")}
                     >
                       Remove
                     </Button>
-                  </div>
-                )}
+                  )}
+                </div>
               </div>
             </div>
           ))}
@@ -818,7 +797,7 @@ function AdminDashboard() {
                 {filteredUsers.length === 0 && (
                   <TableRow>
                     <TableCell colSpan={6} className="py-10 text-center text-sm text-muted-foreground">
-                      No accounts match that search.
+                      {usersQ.isLoading ? "Loading accounts…" : usersQ.isError ? errMsg(usersQ.error) : "No accounts match that search."}
                     </TableCell>
                   </TableRow>
                 )}
@@ -843,44 +822,61 @@ function AdminDashboard() {
                 </TableRow>
               </TableHeader>
               <TableBody>
+                {orders.length === 0 && (
+                  <TableRow>
+                    <TableCell colSpan={7} className="py-10 text-center text-sm text-muted-foreground">
+                      {ordersQ.isLoading ? "Loading orders…" : ordersQ.isError ? errMsg(ordersQ.error) : "No orders yet."}
+                    </TableCell>
+                  </TableRow>
+                )}
                 {orders.map((o) => (
                   <TableRow key={o.id}>
-                    <TableCell className="font-medium">{o.id}</TableCell>
+                    <TableCell className="font-medium">
+                      {o.shortId}
+                      <span className="block text-xs text-muted-foreground">{new Date(o.createdAt).toLocaleDateString()}</span>
+                    </TableCell>
                     <TableCell className="text-sm">
                       {o.buyer}
                       <span className="block text-xs text-muted-foreground">{o.vendor}</span>
                     </TableCell>
                     <TableCell className="text-sm">{formatPrice(o.amount)}</TableCell>
-                    <TableCell className="text-sm text-muted-foreground">
+                    <TableCell className="text-sm capitalize text-muted-foreground">
                       <span className="inline-flex items-center gap-1">
                         <CreditCard className="h-3.5 w-3.5" /> {o.method}
                       </span>
                     </TableCell>
                     <TableCell>
                       <Badge
-                        variant={
-                          o.payment === "Paid"
-                            ? "outline"
-                            : o.payment === "Refund requested"
-                              ? "destructive"
-                              : "secondary"
-                        }
+                        className="capitalize"
+                        variant={o.payment === "paid" ? "outline" : o.payment === "refunded" || o.payment === "failed" ? "destructive" : "secondary"}
                       >
                         {o.payment}
                       </Badge>
                     </TableCell>
-                    <TableCell className="text-sm text-muted-foreground">
-                      {o.fulfilment}
-                    </TableCell>
+                    <TableCell className="text-sm capitalize text-muted-foreground">{o.fulfilment}</TableCell>
                     <TableCell className="text-right">
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        disabled={o.payment !== "Refund requested"}
-                        onClick={() => refund(o.id)}
-                      >
-                        Approve refund
-                      </Button>
+                      <div className="flex flex-wrap justify-end gap-1">
+                        {o.fulfilment !== "delivered" && o.fulfilment !== "cancelled" && (
+                          <Button size="sm" variant="outline" disabled={orderMut.isPending} onClick={() => orderMut.mutate({ id: o.id, action: "advance" })}>
+                            Advance
+                          </Button>
+                        )}
+                        {o.payment !== "paid" && o.payment !== "refunded" && (
+                          <Button size="sm" variant="outline" disabled={orderMut.isPending} onClick={() => orderMut.mutate({ id: o.id, action: "mark_paid" })}>
+                            Mark paid
+                          </Button>
+                        )}
+                        {o.payment === "paid" && (
+                          <Button size="sm" variant="outline" disabled={orderMut.isPending} onClick={() => { if (confirm("Refund this order?")) orderMut.mutate({ id: o.id, action: "refund" }); }}>
+                            Refund
+                          </Button>
+                        )}
+                        {o.payment !== "paid" && o.fulfilment !== "cancelled" && (
+                          <Button size="sm" variant="ghost" disabled={orderMut.isPending} onClick={() => orderMut.mutate({ id: o.id, action: "cancel" })}>
+                            Cancel
+                          </Button>
+                        )}
+                      </div>
                     </TableCell>
                   </TableRow>
                 ))}
@@ -891,27 +887,24 @@ function AdminDashboard() {
 
         {/* Complaints */}
         <TabsContent value="complaints" className="mt-6 space-y-4">
+          {complaints.length === 0 && (
+            <p className="text-sm text-muted-foreground">
+              {complaintsQ.isLoading ? "Loading complaints…" : "No complaints have been filed."}
+            </p>
+          )}
           {complaints.map((c) => (
             <div key={c.id} className="rounded-2xl border bg-card p-5 shadow-sm">
               <div className="flex flex-wrap items-start justify-between gap-4">
                 <div>
                   <div className="flex items-center gap-2">
                     <h3 className="font-semibold">{c.topic}</h3>
-                    <Badge
-                      variant={
-                        c.severity === "High"
-                          ? "destructive"
-                          : c.severity === "Medium"
-                            ? "secondary"
-                            : "outline"
-                      }
-                    >
+                    <Badge variant={c.severity === "High" ? "destructive" : c.severity === "Medium" ? "secondary" : "outline"}>
                       {c.severity}
                     </Badge>
                     {c.status === "resolved" && <Badge variant="outline">Resolved</Badge>}
                   </div>
                   <p className="mt-1 text-xs text-muted-foreground">
-                    {c.from} → {c.against} · #{c.id}
+                    {c.from} → {c.against} · #{c.id.slice(0, 8).toUpperCase()}
                   </p>
                   <p className="mt-3 max-w-2xl text-sm text-muted-foreground">{c.detail}</p>
                 </div>
@@ -929,15 +922,16 @@ function AdminDashboard() {
         <TabsContent value="analytics" className="mt-6 grid gap-6 lg:grid-cols-2">
           <div className="rounded-2xl border bg-card p-6 shadow-sm">
             <h3 className="flex items-center gap-2 font-semibold">
-              <Activity className="h-4 w-4" /> Monthly gross volume (PKR millions)
+              <Activity className="h-4 w-4" /> Monthly paid volume (last 6 months)
             </h3>
             <div className="mt-6 flex h-48 items-end gap-3">
               {revenueSeries.map((r) => (
-                <div key={r.month} className="flex flex-1 flex-col items-center gap-2">
+                <div key={r.month} className="flex h-full flex-1 flex-col items-center justify-end gap-2">
                   <div
                     className="w-full rounded-t-md bg-primary/80"
-                    style={{ height: `${r.value}%` }}
-                    aria-label={`${r.month}: ${r.value}M`}
+                    style={{ height: `${Math.max(r.value, 2)}%` }}
+                    title={`${r.month}: ${formatPrice(r.total)}`}
+                    aria-label={`${r.month}: ${formatPrice(r.total)}`}
                   />
                   <span className="text-xs text-muted-foreground">{r.month}</span>
                 </div>
@@ -949,40 +943,24 @@ function AdminDashboard() {
               <Users className="h-4 w-4" /> Top vendors by listings
             </h3>
             <div className="mt-5 space-y-4">
-              {vendors.map((v) => {
-                const share = Math.round(
-                  (v.products / vendors.reduce((s, x) => s + x.products, 0)) * 100,
-                );
-                return (
-                  <div key={v.id}>
-                    <div className="flex items-center justify-between text-sm">
-                      <span className="font-medium">{v.name}</span>
-                      <span className="text-muted-foreground">{share}%</span>
-                    </div>
-                    <Progress value={share} className="mt-2" />
+              {topVendors.length === 0 && <p className="text-sm text-muted-foreground">No listings yet.</p>}
+              {topVendors.map((v) => (
+                <div key={v.name}>
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="font-medium">{v.name}</span>
+                    <span className="text-muted-foreground">{v.share}%</span>
                   </div>
-                );
-              })}
+                  <Progress value={v.share} className="mt-2" />
+                </div>
+              ))}
             </div>
             <Separator className="my-6" />
             <p className="text-sm text-muted-foreground">
-              {products.length} live listings across {vendors.length} approved stores ·
-              average store rating{" "}
-              {(vendors.reduce((s, v) => s + v.rating, 0) / vendors.length).toFixed(2)}.
+              {listings.filter((l) => l.status === "approved").length} live listings ·{" "}
+              {users.filter((u) => u.role === "Vendor").length} vendors ·{" "}
+              {users.filter((u) => u.role === "Buyer").length} buyers · {orders.length} orders.
             </p>
           </div>
-        </TabsContent>
-
-        {/* Audit log */}
-        <TabsContent value="audit" className="mt-6">
-          <div className="rounded-2xl border bg-card p-6 shadow-sm">
-            <div className="flex flex-wrap items-start justify-between gap-4">
-              <div>
-                <h3 className="font-semibold">Account audit log</h3>
-                <p className="mt-1 text-sm text-muted-foreground">
-                  Immutable record of every administrative action, sign-in and payout.
-                </p>
-              </div>
               <div className="flex gap-2">
                 <Button variant="outline" onClick={resetAuditFilters}>
                   Reset filters
