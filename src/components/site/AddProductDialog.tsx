@@ -82,7 +82,7 @@ export function AddProductDialog({ children }: { children: ReactNode }) {
       city: prof?.city || "Lahore",
       price: amount,
       stock: 1,
-      image_url: pics[0],
+      image_url: pics[0] ?? null,
       image_urls: pics,
       description: description.trim().slice(0, 1000),
     });
@@ -93,6 +93,7 @@ export function AddProductDialog({ children }: { children: ReactNode }) {
     qc.invalidateQueries({ queryKey: ["vendor-products"] });
     reset();
     setOpen(false);
+    return undefined;
   }
 
   const pick = (value: string, onChange: (v: string) => void, opts: readonly string[], ph: string) => (
