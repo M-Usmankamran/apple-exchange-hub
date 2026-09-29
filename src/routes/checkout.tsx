@@ -92,9 +92,14 @@ function Checkout() {
                 <Input
                   id="phone"
                   required
-                  inputMode="tel"
-                  placeholder="03XX-XXXXXXX"
-                  maxLength={20}
+                  inputMode="numeric"
+                  pattern="\d{11}"
+                  placeholder="03001234567"
+                  maxLength={11}
+                  onInput={(e) => {
+                    const el = e.currentTarget;
+                    el.value = el.value.replace(/\D/g, "").slice(0, 11);
+                  }}
                   className="mt-1.5"
                 />
               </div>

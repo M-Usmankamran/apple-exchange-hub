@@ -23,7 +23,7 @@ export const storageSizes = ["128GB", "256GB", "512GB", "1TB", "2TB"] as const;
 
 /** Field limits shared across profile and verification forms. */
 export const MAX_CNIC_LENGTH = 15; // 13 digits + 2 dashes
-export const MAX_PHONE_LENGTH = 15;
+export const MAX_PHONE_LENGTH = 11; // 11 digits, e.g. 03001234567
 
 /** Formats a CNIC as 00000-0000000-0 and caps it at 13 digits. */
 export function formatCnic(value: string): string {
@@ -32,7 +32,7 @@ export function formatCnic(value: string): string {
   return parts.join("-");
 }
 
-/** Keeps only phone-safe characters and caps the length. */
+/** Digits only, capped at 11 characters. */
 export function formatPhone(value: string): string {
-  return value.replace(/[^\d+\s-]/g, "").slice(0, MAX_PHONE_LENGTH);
+  return value.replace(/\D/g, "").slice(0, MAX_PHONE_LENGTH);
 }

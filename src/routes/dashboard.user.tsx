@@ -270,7 +270,7 @@ function UserDashboard() {
           </div>
           <div className="space-y-2">
             <Label htmlFor="uphone">Mobile</Label>
-            <Input id="uphone" defaultValue="+92 300 5566778" />
+            <Input id="uphone" defaultValue="03005566778" />
           </div>
           <div className="space-y-2">
             <Label htmlFor="uaddr">Delivery address</Label>
