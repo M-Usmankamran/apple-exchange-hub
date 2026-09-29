@@ -26,7 +26,7 @@ import { useProfileForm } from "@/hooks/use-profile-form";
 export const Route = createFileRoute("/profile/vendor")({
   head: () => ({
     meta: [
-      { title: "Vendor Profile & Shop Photo | AppleHub" },
+      { title: "Shop Profile & Shop Photo | AppleHub" },
       {
         name: "description",
         content:
@@ -65,7 +65,7 @@ function VendorProfile() {
   return (
     <div className="mx-auto max-w-3xl px-4 py-12">
       <Badge variant="secondary" className="gap-1">
-        <Store className="h-3.5 w-3.5" /> Vendor profile
+        <Store className="h-3.5 w-3.5" /> Shop profile
       </Badge>
       <h1 className="mt-4 text-3xl font-bold tracking-tight">{shop}</h1>
       <p className="mt-2 text-sm text-muted-foreground">
@@ -98,7 +98,12 @@ function VendorProfile() {
         }}
         className="mt-6 grid gap-4 rounded-3xl border bg-card p-6 shadow-sm sm:grid-cols-2"
       >
-        <h2 className="text-lg font-semibold sm:col-span-2">Shop details</h2>
+        <div className="sm:col-span-2">
+          <h2 className="text-lg font-semibold">Shop profile</h2>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Update your shop information below. Every field is saved to your account.
+          </p>
+        </div>
         <Field id="v-shop" label="Shop name" value={form.shop_name} onChange={(v) => set("shop_name", v)} />
         <Field id="v-owner" label="Owner name" value={form.owner_name} onChange={(v) => set("owner_name", v)} />
         <Field
@@ -135,7 +140,7 @@ function VendorProfile() {
         </div>
         <Field
           id="v-hours"
-          label="Pickup hours"
+          label="Shop working hours"
           placeholder="11:00 — 21:00"
           value={form.pickup_hours}
           onChange={(v) => set("pickup_hours", v)}

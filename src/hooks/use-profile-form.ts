@@ -41,10 +41,11 @@ export function useProfileForm() {
     queryKey: ["profile-full", user?.id],
     enabled: !!user,
     queryFn: async () => {
+      if (!user) throw new Error("You need to sign in first.");
       const { data, error } = await supabase
         .from("profiles")
         .select(KEYS.join(","))
-        .eq("id", user!.id)
+        .eq("id", user.id)
         .maybeSingle();
       if (error) throw new Error(error.message);
       return (data ?? null) as Partial<Record<keyof ProfileFields, string | null>> | null;
