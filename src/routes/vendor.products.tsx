@@ -202,6 +202,7 @@ function VendorProducts() {
             </div>
             <div className="flex items-center gap-3">
               <span className="font-semibold">{formatPrice(Number(p.price))}</span>
+              <Button size="icon" variant="ghost" onClick={() => openEdit(p)} aria-label="Edit listing"><Pencil className="size-4" /></Button>
               <Button size="icon" variant="ghost" onClick={() => remove(p.id)} aria-label="Delete"><Trash2 className="size-4" /></Button>
             </div>
           </div>
