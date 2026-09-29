@@ -14,6 +14,42 @@ export type Database = {
   }
   public: {
     Tables: {
+      admin_audit_log: {
+        Row: {
+          action: string
+          actor_email: string
+          actor_id: string | null
+          category: string
+          created_at: string
+          id: string
+          ip: string
+          severity: string
+          target: string
+        }
+        Insert: {
+          action: string
+          actor_email?: string
+          actor_id?: string | null
+          category?: string
+          created_at?: string
+          id?: string
+          ip?: string
+          severity?: string
+          target?: string
+        }
+        Update: {
+          action?: string
+          actor_email?: string
+          actor_id?: string | null
+          category?: string
+          created_at?: string
+          id?: string
+          ip?: string
+          severity?: string
+          target?: string
+        }
+        Relationships: []
+      }
       auctions: {
         Row: {
           bid_increment: number
@@ -204,6 +240,48 @@ export type Database = {
           status?: string
           submitted_at?: string
           updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      complaints: {
+        Row: {
+          against: string
+          created_at: string
+          detail: string
+          from_name: string
+          id: string
+          resolution: string | null
+          resolved_at: string | null
+          severity: string
+          status: string
+          topic: string
+          user_id: string
+        }
+        Insert: {
+          against?: string
+          created_at?: string
+          detail: string
+          from_name?: string
+          id?: string
+          resolution?: string | null
+          resolved_at?: string | null
+          severity?: string
+          status?: string
+          topic: string
+          user_id: string
+        }
+        Update: {
+          against?: string
+          created_at?: string
+          detail?: string
+          from_name?: string
+          id?: string
+          resolution?: string | null
+          resolved_at?: string | null
+          severity?: string
+          status?: string
+          topic?: string
           user_id?: string
         }
         Relationships: []
