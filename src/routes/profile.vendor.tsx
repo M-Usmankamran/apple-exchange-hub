@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ShieldCheck, Store } from "lucide-react";
+import { Loader2, ShieldCheck, Store } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -14,7 +14,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { MAX_CNIC_LENGTH, MAX_PHONE_LENGTH, pkCities } from "@/lib/form-options";
+import {
+  MAX_CNIC_LENGTH,
+  MAX_PHONE_LENGTH,
+  formatCnic,
+  formatPhone,
+  pkCities,
+} from "@/lib/form-options";
+import { useProfileForm } from "@/hooks/use-profile-form";
 
 export const Route = createFileRoute("/profile/vendor")({
   head: () => ({
@@ -39,12 +46,28 @@ export const Route = createFileRoute("/profile/vendor")({
 });
 
 function VendorProfile() {
+  const { auth, form, set, save, loadingProfile } = useProfileForm();
+
+  if (!auth.loading && !auth.user) {
+    return (
+      <div className="mx-auto max-w-md px-4 py-24 text-center">
+        <h1 className="text-2xl font-bold">Sign in to manage your shop profile</h1>
+        <Button asChild className="mt-6">
+          <Link to="/auth">Sign in</Link>
+        </Button>
+      </div>
+    );
+  }
+
+  const shop = form.shop_name || form.display_name || auth.displayName;
+  const verified = auth.vendorStatus === "approved";
+
   return (
     <div className="mx-auto max-w-3xl px-4 py-12">
       <Badge variant="secondary" className="gap-1">
         <Store className="h-3.5 w-3.5" /> Vendor profile
       </Badge>
-      <h1 className="mt-4 text-3xl font-bold tracking-tight">Apex Apple Store</h1>
+      <h1 className="mt-4 text-3xl font-bold tracking-tight">{shop}</h1>
       <p className="mt-2 text-sm text-muted-foreground">
         Your shop logo appears on every listing, quote and buyer chat.
       </p>
@@ -52,11 +75,12 @@ function VendorProfile() {
       <section className="mt-8 rounded-3xl border bg-card p-6 shadow-sm">
         <div className="flex items-center justify-between gap-3">
           <h2 className="text-lg font-semibold">Shop logo</h2>
-          <Badge className="gap-1">
-            <ShieldCheck className="h-3.5 w-3.5" /> Verified vendor
+          <Badge variant={verified ? "default" : "secondary"} className="gap-1">
+            <ShieldCheck className="h-3.5 w-3.5" />
+            {verified ? "Verified vendor" : "Awaiting approval"}
           </Badge>
         </div>
-        <AvatarUpload role="vendor" name="Apex Apple Store" className="mt-5" />
+        <AvatarUpload role="vendor" name={shop} className="mt-5" />
       </section>
 
       <section className="mt-6 rounded-3xl border bg-card p-6 shadow-sm">
@@ -67,25 +91,36 @@ function VendorProfile() {
         <CnicUpload accountType="vendor" className="mt-5" />
       </section>
 
-      <section className="mt-6 grid gap-4 rounded-3xl border bg-card p-6 shadow-sm sm:grid-cols-2">
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          save.mutate(form);
+        }}
+        className="mt-6 grid gap-4 rounded-3xl border bg-card p-6 shadow-sm sm:grid-cols-2"
+      >
         <h2 className="text-lg font-semibold sm:col-span-2">Shop details</h2>
-        <Field id="v-shop" label="Shop name" defaultValue="Apex Apple Store" />
-        <Field id="v-owner" label="Owner name" defaultValue="Bilal Ahmed" />
+        <Field id="v-shop" label="Shop name" value={form.shop_name} onChange={(v) => set("shop_name", v)} />
+        <Field id="v-owner" label="Owner name" value={form.owner_name} onChange={(v) => set("owner_name", v)} />
         <Field
           id="v-cnic"
           label="CNIC number"
-          defaultValue="35202-1234567-1"
+          placeholder="00000-0000000-0"
           maxLength={MAX_CNIC_LENGTH}
+          value={form.cnic_number}
+          onChange={(v) => set("cnic_number", formatCnic(v))}
         />
         <Field
           id="v-phone"
           label="Shop phone"
-          defaultValue="03217654321"
+          placeholder="03001234567"
+          inputMode="numeric"
           maxLength={MAX_PHONE_LENGTH}
+          value={form.phone}
+          onChange={(v) => set("phone", formatPhone(v))}
         />
         <div className="space-y-2">
           <Label>City</Label>
-          <Select defaultValue="Lahore">
+          <Select value={form.city} onValueChange={(v) => set("city", v)}>
             <SelectTrigger>
               <SelectValue placeholder="Select city" />
             </SelectTrigger>
@@ -98,22 +133,40 @@ function VendorProfile() {
             </SelectContent>
           </Select>
         </div>
-        <Field id="v-hours" label="Pickup hours" defaultValue="11:00 — 21:00" />
+        <Field
+          id="v-hours"
+          label="Pickup hours"
+          placeholder="11:00 — 21:00"
+          value={form.pickup_hours}
+          onChange={(v) => set("pickup_hours", v)}
+        />
+        <div className="sm:col-span-2">
+          <Field
+            id="v-address"
+            label="Shop address"
+            value={form.delivery_address}
+            onChange={(v) => set("delivery_address", v)}
+          />
+        </div>
         <div className="space-y-2 sm:col-span-2">
           <Label htmlFor="v-about">Shop description</Label>
           <Textarea
             id="v-about"
             rows={3}
-            defaultValue="Authorised reseller of new and certified pre-owned Apple devices with 7-day checked warranty."
+            value={form.shop_description}
+            onChange={(e) => set("shop_description", e.target.value)}
           />
         </div>
         <div className="flex flex-wrap gap-2 sm:col-span-2">
-          <Button>Save changes</Button>
-          <Button variant="outline" asChild>
+          <Button type="submit" disabled={save.isPending || loadingProfile}>
+            {save.isPending ? <Loader2 className="mr-2 size-4 animate-spin" /> : null}
+            Save changes
+          </Button>
+          <Button variant="outline" asChild type="button">
             <Link to="/dashboard/vendor">Go to vendor dashboard</Link>
           </Button>
         </div>
-      </section>
+      </form>
 
       <p className="mt-6 flex items-start gap-2 text-xs text-muted-foreground">
         <ShieldCheck className="mt-0.5 size-3.5" /> Logos are validated by file signature, capped at
@@ -126,18 +179,31 @@ function VendorProfile() {
 function Field({
   id,
   label,
-  defaultValue,
+  value,
+  onChange,
   maxLength,
+  placeholder,
+  inputMode,
 }: {
   id: string;
   label: string;
-  defaultValue?: string;
+  value: string;
+  onChange: (v: string) => void;
   maxLength?: number;
+  placeholder?: string;
+  inputMode?: "numeric";
 }) {
   return (
     <div className="space-y-2">
       <Label htmlFor={id}>{label}</Label>
-      <Input id={id} defaultValue={defaultValue} maxLength={maxLength} />
+      <Input
+        id={id}
+        value={value}
+        maxLength={maxLength}
+        placeholder={placeholder}
+        inputMode={inputMode}
+        onChange={(e) => onChange(e.target.value)}
+      />
     </div>
   );
 }

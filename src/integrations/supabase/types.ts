@@ -322,33 +322,48 @@ export type Database = {
         Row: {
           account_type: string
           city: string | null
+          cnic_number: string | null
           created_at: string
           delivery_address: string | null
           display_name: string | null
           id: string
+          owner_name: string | null
           phone: string | null
+          pickup_hours: string | null
+          shop_description: string | null
+          shop_name: string | null
           updated_at: string
           vendor_status: string
         }
         Insert: {
           account_type?: string
           city?: string | null
+          cnic_number?: string | null
           created_at?: string
           delivery_address?: string | null
           display_name?: string | null
           id: string
+          owner_name?: string | null
           phone?: string | null
+          pickup_hours?: string | null
+          shop_description?: string | null
+          shop_name?: string | null
           updated_at?: string
           vendor_status?: string
         }
         Update: {
           account_type?: string
           city?: string | null
+          cnic_number?: string | null
           created_at?: string
           delivery_address?: string | null
           display_name?: string | null
           id?: string
+          owner_name?: string | null
           phone?: string | null
+          pickup_hours?: string | null
+          shop_description?: string | null
+          shop_name?: string | null
           updated_at?: string
           vendor_status?: string
         }
