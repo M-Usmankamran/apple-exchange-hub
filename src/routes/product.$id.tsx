@@ -14,6 +14,8 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { useCart } from "@/lib/cart";
+import { Heart } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
 import {
   BULK_MIN_QTY,
   bulkPrice,
@@ -179,6 +181,31 @@ function ProductDetail() {
               }}
             >
               Buy now
+            </Button>
+            <Button
+              size="lg"
+              variant="ghost"
+              onClick={async () => {
+                const { data: u } = await supabase.auth.getUser();
+                if (!u.user) {
+                  toast.error("Please sign in to save items.");
+                  return;
+                }
+                const { error } = await supabase.from("wishlist_items").upsert(
+                  {
+                    user_id: u.user.id,
+                    product_id: product.id,
+                    product_name: `${product.name} ${product.storage}`,
+                    price: product.price,
+                    image_url: product.images[0] ?? null,
+                  },
+                  { onConflict: "user_id,product_id" },
+                );
+                if (error) toast.error(error.message);
+                else toast.success("Saved to your wishlist");
+              }}
+            >
+              <Heart className="mr-2 h-4 w-4" /> Save
             </Button>
           </div>
 

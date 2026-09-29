@@ -50,6 +50,13 @@
       "when": 1790719665613,
       "tag": "0006_admin_audit_and_complaints",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1790720167257,
+      "tag": "0007_buyer_requests_sell_exchange_wishlist",
+      "breakpoints": true
     }
   ]
 }

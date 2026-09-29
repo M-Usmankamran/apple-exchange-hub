@@ -322,6 +322,57 @@ export type Database = {
         }
         Relationships: []
       }
+      exchange_requests: {
+        Row: {
+          battery: number
+          created_at: string
+          details: string | null
+          difference: number
+          give_condition: string
+          give_model: string
+          give_storage: string
+          give_value: number
+          id: string
+          status: string
+          target_name: string
+          target_price: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          battery?: number
+          created_at?: string
+          details?: string | null
+          difference: number
+          give_condition: string
+          give_model: string
+          give_storage: string
+          give_value: number
+          id?: string
+          status?: string
+          target_name: string
+          target_price: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          battery?: number
+          created_at?: string
+          details?: string | null
+          difference?: number
+          give_condition?: string
+          give_model?: string
+          give_storage?: string
+          give_value?: number
+          id?: string
+          status?: string
+          target_name?: string
+          target_price?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       messages: {
         Row: {
           body: string
@@ -559,6 +610,51 @@ export type Database = {
           },
         ]
       }
+      sell_requests: {
+        Row: {
+          asking_price: number
+          battery: number
+          condition: string
+          created_at: string
+          details: string | null
+          id: string
+          model: string
+          radius_km: number
+          status: string
+          storage: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          asking_price: number
+          battery?: number
+          condition: string
+          created_at?: string
+          details?: string | null
+          id?: string
+          model: string
+          radius_km?: number
+          status?: string
+          storage: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          asking_price?: number
+          battery?: number
+          condition?: string
+          created_at?: string
+          details?: string | null
+          id?: string
+          model?: string
+          radius_km?: number
+          status?: string
+          storage?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           created_at: string
@@ -637,6 +733,36 @@ export type Database = {
           updated_at?: string
           vendor_id?: string
           vendor_name?: string
+        }
+        Relationships: []
+      }
+      wishlist_items: {
+        Row: {
+          created_at: string
+          id: string
+          image_url: string | null
+          price: number
+          product_id: string
+          product_name: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          image_url?: string | null
+          price?: number
+          product_id: string
+          product_name: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          image_url?: string | null
+          price?: number
+          product_id?: string
+          product_name?: string
+          user_id?: string
         }
         Relationships: []
       }
