@@ -178,7 +178,7 @@ export function Header() {
             ))}
             <div className="mt-2 border-t pt-2">
               {[
-                { to: "/profile/user", label: "Buyer profile" },
+                ...(!isAdmin ? [{ to: "/profile/user", label: "Buyer profile" }] : []),
                 ...(isVendor ? [{ to: "/profile/vendor", label: "Shop profile" }] : []),
                 ...(isAdmin ? [{ to: "/profile/admin", label: "Admin profile" }] : []),
               ].map((item) => (
