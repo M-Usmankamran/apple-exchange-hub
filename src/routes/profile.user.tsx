@@ -197,15 +197,10 @@ function UserProfile() {
             onChange={(v) => setForm((f) => ({ ...f, delivery_address: v }))}
           />
         </div>
-        <div className="flex flex-wrap gap-2 sm:col-span-2">
+        <div className="sm:col-span-2">
           <Button type="submit" disabled={save.isPending || profileQuery.isLoading}>
             {save.isPending ? <Loader2 className="mr-2 size-4 animate-spin" /> : null}
             Save changes
-          </Button>
-          <Button variant="outline" asChild type="button">
-            <Link to="/dashboard/user">
-              <MapPin className="mr-2 size-4" /> Go to my dashboard
-            </Link>
           </Button>
         </div>
       </form>
