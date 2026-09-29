@@ -106,9 +106,11 @@ export function Header() {
                   <DropdownMenuSeparator />
                 </>
               ) : null}
-              <DropdownMenuItem asChild>
-                <Link to="/profile/user">Buyer profile</Link>
-              </DropdownMenuItem>
+              {!isAdmin ? (
+                <DropdownMenuItem asChild>
+                  <Link to="/profile/user">Buyer profile</Link>
+                </DropdownMenuItem>
+              ) : null}
               {isVendor ? (
                 <DropdownMenuItem asChild>
                   <Link to="/profile/vendor">Shop profile</Link>
