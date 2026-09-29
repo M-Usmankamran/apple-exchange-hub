@@ -209,6 +209,52 @@ function VendorProducts() {
         ))}
         {list.data?.length === 0 && <p className="text-sm text-muted-foreground">No products yet.</p>}
       </div>
+
+      <Dialog open={!!editing} onOpenChange={(open) => { if (!open) setEditing(null); }}>
+        <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-lg">
+          <DialogHeader>
+            <DialogTitle>Edit listing</DialogTitle>
+          </DialogHeader>
+          <form onSubmit={saveEdit} className="grid gap-4 sm:grid-cols-2">
+            <div className="sm:col-span-2"><Label>Product name</Label><Input value={ef.title} maxLength={120} onChange={(e) => setEf((s) => ({ ...s, title: e.target.value }))} /></div>
+            <div><Label>Category</Label>
+              <Select value={ef.category} onValueChange={(v) => setEf((s) => ({ ...s, category: v }))}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>{cats.map(([v, l]) => <SelectItem key={v} value={v}>{l}</SelectItem>)}</SelectContent>
+              </Select>
+            </div>
+            <div><Label>Model</Label><Input value={ef.model} maxLength={60} onChange={(e) => setEf((s) => ({ ...s, model: e.target.value }))} /></div>
+            <div><Label>Storage</Label>
+              <Select value={ef.storage} onValueChange={(v) => setEf((s) => ({ ...s, storage: v }))}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>{storageSizes.map((s) => <SelectItem key={s} value={s}>{s}</SelectItem>)}</SelectContent>
+              </Select>
+            </div>
+            <div><Label>Condition</Label>
+              <Select value={ef.condition} onValueChange={(v) => setEf((s) => ({ ...s, condition: v }))}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>{conds.map((c) => <SelectItem key={c} value={c}>{c}</SelectItem>)}</SelectContent>
+              </Select>
+            </div>
+            <div><Label>City</Label>
+              <Select value={ef.city} onValueChange={(v) => setEf((s) => ({ ...s, city: v }))}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>{pkCities.map((c) => <SelectItem key={c} value={c}>{c}</SelectItem>)}</SelectContent>
+              </Select>
+            </div>
+            <div><Label>Price (PKR)</Label><Input inputMode="numeric" value={ef.price} onChange={(e) => setEf((s) => ({ ...s, price: e.target.value.replace(/\D/g, "").slice(0, 9) }))} /></div>
+            <div><Label>Stock</Label><Input inputMode="numeric" value={ef.stock} onChange={(e) => setEf((s) => ({ ...s, stock: e.target.value.replace(/\D/g, "").slice(0, 4) }))} /></div>
+            <div><Label>Image link (optional)</Label><Input value={ef.image_url} onChange={(e) => setEf((s) => ({ ...s, image_url: e.target.value }))} placeholder="https://…" /></div>
+            <div className="sm:col-span-2"><Label>Description</Label><Textarea value={ef.description} maxLength={1000} onChange={(e) => setEf((s) => ({ ...s, description: e.target.value }))} /></div>
+            <div className="flex gap-2 sm:col-span-2">
+              <Button type="submit" disabled={updating}>
+                {updating && <Loader2 className="size-4 animate-spin" />} Save changes
+              </Button>
+              <Button type="button" variant="outline" onClick={() => setEditing(null)}>Cancel</Button>
+            </div>
+          </form>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
