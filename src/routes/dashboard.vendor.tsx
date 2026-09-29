@@ -1,4 +1,5 @@
 import { AuthGate } from "@/components/site/AuthGate";
+import { AddProductDialog } from "@/components/site/AddProductDialog";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import {
@@ -140,9 +141,11 @@ function VendorDashboard() {
 
         <TabsContent value="products" className="mt-6">
           <div className="flex justify-end">
-            <Button onClick={() => toast.success("Listing draft created — add images to publish")}>
-              <Plus className="mr-2 h-4 w-4" /> {t("addProduct")}
-            </Button>
+            <AddProductDialog>
+              <Button>
+                <Plus className="mr-2 h-4 w-4" /> {t("addProduct")}
+              </Button>
+            </AddProductDialog>
           </div>
           <div className="mt-4 overflow-x-auto rounded-2xl border bg-card shadow-sm">
             <Table>

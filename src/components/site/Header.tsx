@@ -109,22 +109,9 @@ export function Header() {
               <DropdownMenuItem asChild>
                 <Link to="/profile/user">Buyer profile</Link>
               </DropdownMenuItem>
-              <DropdownMenuItem asChild>
-                <Link to="/messages">Message vendors</Link>
-              </DropdownMenuItem>
               {isVendor ? (
                 <DropdownMenuItem asChild>
                   <Link to="/profile/vendor">Shop profile</Link>
-                </DropdownMenuItem>
-              ) : null}
-              {isVendor ? (
-                <DropdownMenuItem asChild>
-                  <Link to="/vendor/products">My products</Link>
-                </DropdownMenuItem>
-              ) : null}
-              {isVendor ? (
-                <DropdownMenuItem asChild>
-                  <Link to="/vendor/messages">Message buyers</Link>
                 </DropdownMenuItem>
               ) : null}
               {isAdmin ? (
@@ -190,14 +177,7 @@ export function Header() {
             <div className="mt-2 border-t pt-2">
               {[
                 { to: "/profile/user", label: "Buyer profile" },
-                { to: "/messages", label: "Message vendors" },
-                ...(isVendor
-                  ? [
-                      { to: "/profile/vendor", label: "Shop profile" },
-                      { to: "/vendor/products", label: "My products" },
-                      { to: "/vendor/messages", label: "Message buyers" },
-                    ]
-                  : []),
+                ...(isVendor ? [{ to: "/profile/vendor", label: "Shop profile" }] : []),
                 ...(isAdmin ? [{ to: "/profile/admin", label: "Admin profile" }] : []),
               ].map((item) => (
                 <Link
