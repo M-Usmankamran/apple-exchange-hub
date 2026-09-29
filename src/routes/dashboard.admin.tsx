@@ -760,7 +760,7 @@ function AdminDashboard() {
                       onChange={(e) =>
                         setReviewForm((f) => ({ ...f, phone: formatPhone(e.target.value) }))
                       }
-                      placeholder="+92 300 1234567"
+                      placeholder="03001234567"
                     />
                   </div>
                   <div>
