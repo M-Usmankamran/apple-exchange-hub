@@ -16,6 +16,7 @@ import { Route as CartRouteImport } from './routes/cart'
 import { Route as CheckoutRouteImport } from './routes/checkout'
 import { Route as CustomizeRouteImport } from './routes/customize'
 import { Route as ExchangeRouteImport } from './routes/exchange'
+import { Route as MessagesRouteImport } from './routes/messages'
 import { Route as RequestsRouteImport } from './routes/requests'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as SellRouteImport } from './routes/sell'
@@ -30,6 +31,8 @@ import { Route as ProductIdRouteImport } from './routes/product.$id'
 import { Route as ProfileAdminRouteImport } from './routes/profile.admin'
 import { Route as ProfileUserRouteImport } from './routes/profile.user'
 import { Route as ProfileVendorRouteImport } from './routes/profile.vendor'
+import { Route as VendorMessagesRouteImport } from './routes/vendor.messages'
+import { Route as VendorProductsRouteImport } from './routes/vendor.products'
 import { Route as ApiPublicPaymentsJazzcashReturnRouteImport } from './routes/api/public/payments/jazzcash/return'
 
 const IndexRoute = IndexRouteImport.update({
@@ -65,6 +68,11 @@ const CustomizeRoute = CustomizeRouteImport.update({
 const ExchangeRoute = ExchangeRouteImport.update({
   id: '/exchange',
   path: '/exchange',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MessagesRoute = MessagesRouteImport.update({
+  id: '/messages',
+  path: '/messages',
   getParentRoute: () => rootRouteImport,
 } as any)
 const RequestsRoute = RequestsRouteImport.update({
@@ -137,6 +145,16 @@ const ProfileVendorRoute = ProfileVendorRouteImport.update({
   path: '/profile/vendor',
   getParentRoute: () => rootRouteImport,
 } as any)
+const VendorMessagesRoute = VendorMessagesRouteImport.update({
+  id: '/vendor/messages',
+  path: '/vendor/messages',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const VendorProductsRoute = VendorProductsRouteImport.update({
+  id: '/vendor/products',
+  path: '/vendor/products',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicPaymentsJazzcashReturnRoute =
   ApiPublicPaymentsJazzcashReturnRouteImport.update({
     id: '/api/public/payments/jazzcash/return',
@@ -152,6 +170,7 @@ export interface FileRoutesByFullPath {
   '/checkout': typeof CheckoutRoute
   '/customize': typeof CustomizeRoute
   '/exchange': typeof ExchangeRoute
+  '/messages': typeof MessagesRoute
   '/requests': typeof RequestsRoute
   '/reset-password': typeof ResetPasswordRoute
   '/sell': typeof SellRoute
@@ -166,6 +185,8 @@ export interface FileRoutesByFullPath {
   '/profile/admin': typeof ProfileAdminRoute
   '/profile/user': typeof ProfileUserRoute
   '/profile/vendor': typeof ProfileVendorRoute
+  '/vendor/messages': typeof VendorMessagesRoute
+  '/vendor/products': typeof VendorProductsRoute
   '/api/public/payments/jazzcash/return': typeof ApiPublicPaymentsJazzcashReturnRoute
 }
 export interface FileRoutesByTo {
@@ -176,6 +197,7 @@ export interface FileRoutesByTo {
   '/checkout': typeof CheckoutRoute
   '/customize': typeof CustomizeRoute
   '/exchange': typeof ExchangeRoute
+  '/messages': typeof MessagesRoute
   '/requests': typeof RequestsRoute
   '/reset-password': typeof ResetPasswordRoute
   '/sell': typeof SellRoute
@@ -190,6 +212,8 @@ export interface FileRoutesByTo {
   '/profile/admin': typeof ProfileAdminRoute
   '/profile/user': typeof ProfileUserRoute
   '/profile/vendor': typeof ProfileVendorRoute
+  '/vendor/messages': typeof VendorMessagesRoute
+  '/vendor/products': typeof VendorProductsRoute
   '/api/public/payments/jazzcash/return': typeof ApiPublicPaymentsJazzcashReturnRoute
 }
 export interface FileRoutesById {
@@ -201,6 +225,7 @@ export interface FileRoutesById {
   '/checkout': typeof CheckoutRoute
   '/customize': typeof CustomizeRoute
   '/exchange': typeof ExchangeRoute
+  '/messages': typeof MessagesRoute
   '/requests': typeof RequestsRoute
   '/reset-password': typeof ResetPasswordRoute
   '/sell': typeof SellRoute
@@ -215,6 +240,8 @@ export interface FileRoutesById {
   '/profile/admin': typeof ProfileAdminRoute
   '/profile/user': typeof ProfileUserRoute
   '/profile/vendor': typeof ProfileVendorRoute
+  '/vendor/messages': typeof VendorMessagesRoute
+  '/vendor/products': typeof VendorProductsRoute
   '/api/public/payments/jazzcash/return': typeof ApiPublicPaymentsJazzcashReturnRoute
 }
 export interface FileRouteTypes {
@@ -227,6 +254,7 @@ export interface FileRouteTypes {
     | '/checkout'
     | '/customize'
     | '/exchange'
+    | '/messages'
     | '/requests'
     | '/reset-password'
     | '/sell'
@@ -241,6 +269,8 @@ export interface FileRouteTypes {
     | '/profile/admin'
     | '/profile/user'
     | '/profile/vendor'
+    | '/vendor/messages'
+    | '/vendor/products'
     | '/api/public/payments/jazzcash/return'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -251,6 +281,7 @@ export interface FileRouteTypes {
     | '/checkout'
     | '/customize'
     | '/exchange'
+    | '/messages'
     | '/requests'
     | '/reset-password'
     | '/sell'
@@ -265,6 +296,8 @@ export interface FileRouteTypes {
     | '/profile/admin'
     | '/profile/user'
     | '/profile/vendor'
+    | '/vendor/messages'
+    | '/vendor/products'
     | '/api/public/payments/jazzcash/return'
   id:
     | '__root__'
@@ -275,6 +308,7 @@ export interface FileRouteTypes {
     | '/checkout'
     | '/customize'
     | '/exchange'
+    | '/messages'
     | '/requests'
     | '/reset-password'
     | '/sell'
@@ -289,6 +323,8 @@ export interface FileRouteTypes {
     | '/profile/admin'
     | '/profile/user'
     | '/profile/vendor'
+    | '/vendor/messages'
+    | '/vendor/products'
     | '/api/public/payments/jazzcash/return'
   fileRoutesById: FileRoutesById
 }
@@ -300,6 +336,7 @@ export interface RootRouteChildren {
   CheckoutRoute: typeof CheckoutRoute
   CustomizeRoute: typeof CustomizeRoute
   ExchangeRoute: typeof ExchangeRoute
+  MessagesRoute: typeof MessagesRoute
   RequestsRoute: typeof RequestsRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
   SellRoute: typeof SellRoute
@@ -314,6 +351,8 @@ export interface RootRouteChildren {
   ProfileAdminRoute: typeof ProfileAdminRoute
   ProfileUserRoute: typeof ProfileUserRoute
   ProfileVendorRoute: typeof ProfileVendorRoute
+  VendorMessagesRoute: typeof VendorMessagesRoute
+  VendorProductsRoute: typeof VendorProductsRoute
   ApiPublicPaymentsJazzcashReturnRoute: typeof ApiPublicPaymentsJazzcashReturnRoute
 }
 
@@ -366,6 +405,13 @@ declare module '@tanstack/react-router' {
       path: '/exchange'
       fullPath: '/exchange'
       preLoaderRoute: typeof ExchangeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/messages': {
+      id: '/messages'
+      path: '/messages'
+      fullPath: '/messages'
+      preLoaderRoute: typeof MessagesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/requests': {
@@ -466,6 +512,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProfileVendorRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/vendor/messages': {
+      id: '/vendor/messages'
+      path: '/vendor/messages'
+      fullPath: '/vendor/messages'
+      preLoaderRoute: typeof VendorMessagesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/vendor/products': {
+      id: '/vendor/products'
+      path: '/vendor/products'
+      fullPath: '/vendor/products'
+      preLoaderRoute: typeof VendorProductsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/payments/jazzcash/return': {
       id: '/api/public/payments/jazzcash/return'
       path: '/api/public/payments/jazzcash/return'
@@ -484,6 +544,7 @@ const rootRouteChildren: RootRouteChildren = {
   CheckoutRoute: CheckoutRoute,
   CustomizeRoute: CustomizeRoute,
   ExchangeRoute: ExchangeRoute,
+  MessagesRoute: MessagesRoute,
   RequestsRoute: RequestsRoute,
   ResetPasswordRoute: ResetPasswordRoute,
   SellRoute: SellRoute,
@@ -498,6 +559,8 @@ const rootRouteChildren: RootRouteChildren = {
   ProfileAdminRoute: ProfileAdminRoute,
   ProfileUserRoute: ProfileUserRoute,
   ProfileVendorRoute: ProfileVendorRoute,
+  VendorMessagesRoute: VendorMessagesRoute,
+  VendorProductsRoute: VendorProductsRoute,
   ApiPublicPaymentsJazzcashReturnRoute: ApiPublicPaymentsJazzcashReturnRoute,
 }
 export const routeTree = rootRouteImport

@@ -217,9 +217,9 @@ function ProductDetail() {
               )}
             </div>
             <div className="mt-4 flex flex-wrap gap-2">
-              <Button size="sm" variant="secondary" onClick={() => toast.success("Chat request sent to the vendor")}>
-                <MessageCircle className="size-4" /> Message vendor
-              </Button>
+              <Button size="sm" variant="secondary" onClick={() = asChild>
+<Link to="/messages"><MessageCircle className="size-4" /> Message vendor</Link>
+</Button>
               <Button asChild size="sm" variant="outline">
                 <Link to="/vendors">View store</Link>
               </Button>

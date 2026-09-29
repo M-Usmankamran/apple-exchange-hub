@@ -1,5 +1,5 @@
 import { AuthGate } from "@/components/site/AuthGate";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import {
   Bike,
@@ -302,22 +302,17 @@ function VendorDashboard() {
         </TabsContent>
 
         <TabsContent value="messages" className="mt-6 space-y-3">
-          {["Hamza Sheikh", "Maryam Iqbal", "Nova Traders"].map((name) => (
-            <div
-              key={name}
-              className="flex items-center justify-between rounded-2xl border bg-card p-4 shadow-sm"
-            >
-              <div>
-                <p className="font-medium">{name}</p>
-                <p className="text-xs text-muted-foreground">
-                  Is the unit PTA approved and does it include the box?
-                </p>
-              </div>
-              <Button size="sm" variant="outline" onClick={() => toast.success(t("chat"))}>
-                <MessageCircle className="mr-2 h-4 w-4" /> {t("chat")}
+          <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border bg-card p-4 shadow-sm">
+            <p className="text-sm">Chat with customers who messaged your shop.</p>
+            <div className="flex gap-2">
+              <Button asChild size="sm">
+                <Link to="/vendor/messages"><MessageCircle className="mr-2 h-4 w-4" /> Message buyers</Link>
+              </Button>
+              <Button asChild size="sm" variant="outline">
+                <Link to="/vendor/products"><Plus className="mr-2 h-4 w-4" /> Add product</Link>
               </Button>
             </div>
-          ))}
+          </div>
           <p className="flex items-center gap-2 pt-2 text-xs text-muted-foreground">
             <Star className="h-3.5 w-3.5" /> Reply within 2 hours to keep your response badge.
           </p>
