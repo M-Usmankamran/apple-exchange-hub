@@ -755,7 +755,7 @@ function AdminDashboard() {
                     </label>
                     <Input
                       value={reviewForm.phone}
-                      inputMode="tel"
+                      inputMode="numeric"
                       maxLength={MAX_PHONE_LENGTH}
                       onChange={(e) =>
                         setReviewForm((f) => ({ ...f, phone: formatPhone(e.target.value) }))
