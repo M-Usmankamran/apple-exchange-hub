@@ -68,8 +68,8 @@ export function useProfileForm() {
         .from("profiles")
         .upsert(payload as never, { onConflict: "id" });
       if (error) throw new Error(error.message);
-      if (payload.display_name) {
-        await supabase.auth.updateUser({ data: { display_name: payload.display_name } });
+      if (payload["display_name"]) {
+        await supabase.auth.updateUser({ data: { display_name: payload["display_name"] } });
       }
     },
     onSuccess: () => {
