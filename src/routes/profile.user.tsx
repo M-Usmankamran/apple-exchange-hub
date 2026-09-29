@@ -167,9 +167,9 @@ function UserProfile() {
           <Label htmlFor="u-phone">Mobile number</Label>
           <Input
             id="u-phone"
-            inputMode="tel"
+            inputMode="numeric"
             maxLength={MAX_PHONE_LENGTH}
-            placeholder="+92 300 1234567"
+            placeholder="03001234567"
             value={form.phone}
             onChange={(e) => setForm((f) => ({ ...f, phone: formatPhone(e.target.value) }))}
           />

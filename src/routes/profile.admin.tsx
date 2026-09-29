@@ -49,7 +49,7 @@ function AdminProfile() {
         <h2 className="text-lg font-semibold sm:col-span-2">Account details</h2>
         <Field id="a-name" label="Full name" defaultValue="Hamza Sheikh" />
         <Field id="a-email" label="Work email" type="email" defaultValue="hamza@applehub.pk" />
-        <Field id="a-phone" label="Mobile number" defaultValue="+92 333 9876543" />
+        <Field id="a-phone" label="Mobile number" defaultValue="03339876543" />
         <Field id="a-role" label="Access level" defaultValue="Super admin" />
 
         <div className="flex items-center justify-between rounded-2xl border p-4 sm:col-span-2">

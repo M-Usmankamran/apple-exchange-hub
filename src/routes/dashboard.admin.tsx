@@ -166,7 +166,7 @@ const initialApplications: VendorApplication[] = [
     owner: "Faizan Malik",
     city: "Lahore",
     cnic: "35202-*******-7",
-    phone: "+92 300 1122334",
+    phone: "03001122334",
     submitted: "2 hours ago",
     docs: { cnic: true, shopPhoto: true, utilityBill: false },
     status: "pending",
@@ -177,7 +177,7 @@ const initialApplications: VendorApplication[] = [
     owner: "Sana Yousuf",
     city: "Karachi",
     cnic: "42101-*******-2",
-    phone: "+92 321 8877665",
+    phone: "03218877665",
     submitted: "Yesterday",
     docs: { cnic: true, shopPhoto: true, utilityBill: true },
     status: "pending",
@@ -188,7 +188,7 @@ const initialApplications: VendorApplication[] = [
     owner: "Imran Shah",
     city: "Rawalpindi",
     cnic: "37405-*******-9",
-    phone: "+92 333 4455667",
+    phone: "03334455667",
     submitted: "3 days ago",
     docs: { cnic: false, shopPhoto: true, utilityBill: false },
     status: "pending",
@@ -755,12 +755,12 @@ function AdminDashboard() {
                     </label>
                     <Input
                       value={reviewForm.phone}
-                      inputMode="tel"
+                      inputMode="numeric"
                       maxLength={MAX_PHONE_LENGTH}
                       onChange={(e) =>
                         setReviewForm((f) => ({ ...f, phone: formatPhone(e.target.value) }))
                       }
-                      placeholder="+92 300 1234567"
+                      placeholder="03001234567"
                     />
                   </div>
                   <div>

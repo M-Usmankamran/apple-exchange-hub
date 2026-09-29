@@ -80,7 +80,7 @@ function VendorProfile() {
         <Field
           id="v-phone"
           label="Shop phone"
-          defaultValue="+92 321 7654321"
+          defaultValue="03217654321"
           maxLength={MAX_PHONE_LENGTH}
         />
         <div className="space-y-2">
