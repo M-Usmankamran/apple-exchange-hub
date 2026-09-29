@@ -333,7 +333,7 @@ function UserDashboard() {
             <Label htmlFor="uaddr">Delivery address</Label>
             <Input id="uaddr" value={form.delivery_address} onChange={(e) => set("delivery_address", e.target.value)} />
           </div>
-          <Button onClick={() => save.mutate()} disabled={save.isPending}>Save changes</Button>
+          <Button onClick={() => save.mutate(undefined as never)} disabled={save.isPending}>Save changes</Button>
         </TabsContent>
       </Tabs>
     </div>
