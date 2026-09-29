@@ -21,7 +21,6 @@ const groups = [
   {
     title: "Account",
     links: [
-      { to: "/dashboard/user", label: "My dashboard" },
       { to: "/terms", label: "Terms & Conditions" },
     ],
   },
