@@ -85,7 +85,7 @@ export const advanceVendorOrder = createServerFn({ method: "POST" })
     if (!owned?.length) throw new Error("This order doesn't include your products.");
     const { data: order } = await supabaseAdmin.from("orders").select("status").eq("id", data.orderId).single();
     const idx = ORDER_FLOW.indexOf((order?.status ?? "pending") as (typeof ORDER_FLOW)[number]);
-    const next = ORDER_FLOW[Math.min(idx < 0 ? 1 : idx + 1, ORDER_FLOW.length - 1)];
+    const next: string = ORDER_FLOW[Math.min(idx < 0 ? 1 : idx + 1, ORDER_FLOW.length - 1)] ?? "delivered";
     const { error } = await supabaseAdmin.from("orders").update({ status: next }).eq("id", data.orderId);
     if (error) throw new Error(error.message);
     return { status: next };
