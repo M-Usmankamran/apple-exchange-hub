@@ -1,10 +1,11 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { Loader2, Plus, Trash2 } from "lucide-react";
+import { Loader2, Pencil, Plus, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { AuthGate } from "@/components/site/AuthGate";
 import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -45,11 +46,28 @@ const conds = ["New", "Like New", "Excellent", "Good", "Fair"];
 
 const empty = { title: "", category: "iphone", model: "", storage: "128GB", condition: "New", city: "Lahore", price: "", stock: "1", image_url: "", description: "" };
 
+type ProductRow = {
+  id: string;
+  title: string;
+  category: string;
+  model: string | null;
+  storage: string | null;
+  condition: string;
+  city: string;
+  price: number;
+  stock: number;
+  image_url: string | null;
+  description: string | null;
+};
+
 function VendorProducts() {
   const { user, displayName } = useAuth();
   const qc = useQueryClient();
   const [f, setF] = useState(empty);
   const [saving, setSaving] = useState(false);
+  const [editing, setEditing] = useState<ProductRow | null>(null);
+  const [ef, setEf] = useState(empty);
+  const [updating, setUpdating] = useState(false);
   const set = (k: keyof typeof empty) => (v: string) => setF((s) => ({ ...s, [k]: v }));
 
   const list = useQuery({
@@ -87,6 +105,48 @@ function VendorProducts() {
     if (error) { toast.error(error.message); return; }
     toast.success("Product added to your shop");
     setF(empty);
+    qc.invalidateQueries({ queryKey: ["my-products"] });
+    qc.invalidateQueries({ queryKey: ["vendor-products"] });
+  }
+
+  function openEdit(p: ProductRow) {
+    setEditing(p);
+    setEf({
+      title: p.title,
+      category: p.category,
+      model: p.model ?? "",
+      storage: p.storage ?? "128GB",
+      condition: p.condition,
+      city: p.city,
+      price: String(p.price),
+      stock: String(p.stock),
+      image_url: p.image_url && /^https:\/\//.test(p.image_url) ? p.image_url : "",
+      description: p.description ?? "",
+    });
+  }
+
+  async function saveEdit(e: React.FormEvent) {
+    e.preventDefault();
+    if (!editing) return undefined;
+    const price = Number(ef.price);
+    if (!ef.title.trim() || !(price > 0)) { toast.error("Add a product name and a valid price"); return; }
+    setUpdating(true);
+    const { error } = await supabase.from("vendor_products").update({
+      title: ef.title.trim().slice(0, 120),
+      category: ef.category,
+      model: ef.model.trim() || null,
+      storage: ef.storage,
+      condition: ef.condition,
+      city: ef.city,
+      price,
+      stock: Math.max(0, parseInt(ef.stock) || 0),
+      image_url: /^https:\/\//.test(ef.image_url) ? ef.image_url : editing.image_url,
+      description: ef.description.trim().slice(0, 1000) || null,
+    }).eq("id", editing.id);
+    setUpdating(false);
+    if (error) { toast.error(error.message); return; }
+    toast.success("Listing updated");
+    setEditing(null);
     qc.invalidateQueries({ queryKey: ["my-products"] });
     qc.invalidateQueries({ queryKey: ["vendor-products"] });
   }
@@ -142,12 +202,59 @@ function VendorProducts() {
             </div>
             <div className="flex items-center gap-3">
               <span className="font-semibold">{formatPrice(Number(p.price))}</span>
+              <Button size="icon" variant="ghost" onClick={() => openEdit(p)} aria-label="Edit listing"><Pencil className="size-4" /></Button>
               <Button size="icon" variant="ghost" onClick={() => remove(p.id)} aria-label="Delete"><Trash2 className="size-4" /></Button>
             </div>
           </div>
         ))}
         {list.data?.length === 0 && <p className="text-sm text-muted-foreground">No products yet.</p>}
       </div>
+
+      <Dialog open={!!editing} onOpenChange={(open) => { if (!open) setEditing(null); }}>
+        <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-lg">
+          <DialogHeader>
+            <DialogTitle>Edit listing</DialogTitle>
+          </DialogHeader>
+          <form onSubmit={saveEdit} className="grid gap-4 sm:grid-cols-2">
+            <div className="sm:col-span-2"><Label>Product name</Label><Input value={ef.title} maxLength={120} onChange={(e) => setEf((s) => ({ ...s, title: e.target.value }))} /></div>
+            <div><Label>Category</Label>
+              <Select value={ef.category} onValueChange={(v) => setEf((s) => ({ ...s, category: v }))}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>{cats.map(([v, l]) => <SelectItem key={v} value={v}>{l}</SelectItem>)}</SelectContent>
+              </Select>
+            </div>
+            <div><Label>Model</Label><Input value={ef.model} maxLength={60} onChange={(e) => setEf((s) => ({ ...s, model: e.target.value }))} /></div>
+            <div><Label>Storage</Label>
+              <Select value={ef.storage} onValueChange={(v) => setEf((s) => ({ ...s, storage: v }))}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>{storageSizes.map((s) => <SelectItem key={s} value={s}>{s}</SelectItem>)}</SelectContent>
+              </Select>
+            </div>
+            <div><Label>Condition</Label>
+              <Select value={ef.condition} onValueChange={(v) => setEf((s) => ({ ...s, condition: v }))}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>{conds.map((c) => <SelectItem key={c} value={c}>{c}</SelectItem>)}</SelectContent>
+              </Select>
+            </div>
+            <div><Label>City</Label>
+              <Select value={ef.city} onValueChange={(v) => setEf((s) => ({ ...s, city: v }))}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>{pkCities.map((c) => <SelectItem key={c} value={c}>{c}</SelectItem>)}</SelectContent>
+              </Select>
+            </div>
+            <div><Label>Price (PKR)</Label><Input inputMode="numeric" value={ef.price} onChange={(e) => setEf((s) => ({ ...s, price: e.target.value.replace(/\D/g, "").slice(0, 9) }))} /></div>
+            <div><Label>Stock</Label><Input inputMode="numeric" value={ef.stock} onChange={(e) => setEf((s) => ({ ...s, stock: e.target.value.replace(/\D/g, "").slice(0, 4) }))} /></div>
+            <div><Label>Image link (optional)</Label><Input value={ef.image_url} onChange={(e) => setEf((s) => ({ ...s, image_url: e.target.value }))} placeholder="https://…" /></div>
+            <div className="sm:col-span-2"><Label>Description</Label><Textarea value={ef.description} maxLength={1000} onChange={(e) => setEf((s) => ({ ...s, description: e.target.value }))} /></div>
+            <div className="flex gap-2 sm:col-span-2">
+              <Button type="submit" disabled={updating}>
+                {updating && <Loader2 className="size-4 animate-spin" />} Save changes
+              </Button>
+              <Button type="button" variant="outline" onClick={() => setEditing(null)}>Cancel</Button>
+            </div>
+          </form>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
