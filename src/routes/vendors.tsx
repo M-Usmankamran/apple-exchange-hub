@@ -134,7 +134,7 @@ function VendorsPage() {
               </div>
 
               <div className="mt-5 flex flex-wrap gap-2">
-                <Button size="sm" onClick={() = asChild>
+                <Button size="sm" asChild>
 <Link to="/messages"><MessageCircle className="size-4" /> Message vendor</Link>
 </Button>
                 {vendor?.pickup && (

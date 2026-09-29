@@ -217,7 +217,7 @@ function ProductDetail() {
               )}
             </div>
             <div className="mt-4 flex flex-wrap gap-2">
-              <Button size="sm" variant="secondary" onClick={() = asChild>
+              <Button size="sm" variant="secondary" asChild>
 <Link to="/messages"><MessageCircle className="size-4" /> Message vendor</Link>
 </Button>
               <Button asChild size="sm" variant="outline">
