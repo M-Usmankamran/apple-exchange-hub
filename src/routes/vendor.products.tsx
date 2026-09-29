@@ -64,9 +64,9 @@ function VendorProducts() {
 
   async function add(e: React.FormEvent) {
     e.preventDefault();
-    if (!user) return;
+    if (!user) return undefined;
     const price = Number(f.price);
-    if (!f.title.trim() || !(price > 0)) return toast.error("Add a product name and a valid price");
+    if (!f.title.trim() || !(price > 0)) { toast.error("Add a product name and a valid price"); return; }
     setSaving(true);
     const { data: prof } = await supabase.from("profiles").select("shop_name").eq("id", user.id).maybeSingle();
     const { error } = await supabase.from("vendor_products").insert({
@@ -84,7 +84,7 @@ function VendorProducts() {
       description: f.description.trim().slice(0, 1000) || null,
     });
     setSaving(false);
-    if (error) return toast.error(error.message);
+    if (error) { toast.error(error.message); return; }
     toast.success("Product added to your shop");
     setF(empty);
     qc.invalidateQueries({ queryKey: ["my-products"] });
@@ -93,12 +93,12 @@ function VendorProducts() {
 
   async function remove(id: string) {
     const { error } = await supabase.from("vendor_products").delete().eq("id", id);
-    if (error) return toast.error(error.message);
+    if (error) { toast.error(error.message); return; }
     qc.invalidateQueries({ queryKey: ["my-products"] });
     qc.invalidateQueries({ queryKey: ["vendor-products"] });
   }
 
-  const sel = (k: keyof typeof empty, opts: readonly (readonly [string, string])[] | string[]) => (
+  const sel = (k: keyof typeof empty, opts: readonly (string | readonly [string, string])[]) => (
     <Select value={f[k]} onValueChange={set(k)}>
       <SelectTrigger><SelectValue /></SelectTrigger>
       <SelectContent>

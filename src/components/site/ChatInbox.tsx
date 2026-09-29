@@ -81,7 +81,7 @@ export function ChatInbox({ side, initialId }: { side: Side; initialId?: string 
       .from("messages")
       .insert({ conversation_id: activeId, sender_id: user.id, body: body.slice(0, 2000) });
     setSending(false);
-    if (error) return toast.error("Message could not be sent");
+    if (error) { toast.error("Message could not be sent"); return; }
     setText("");
     qc.invalidateQueries({ queryKey: ["messages", activeId] });
     qc.invalidateQueries({ queryKey: ["conversations", side, user.id] });

@@ -42,8 +42,8 @@ function BuyerMessages() {
         .select("id,title,vendor_id,vendor_name")
         .eq("id", product)
         .maybeSingle();
-      if (!p) return toast.error("That product is no longer available");
-      if (p.vendor_id === user.id) return toast.error("You can't message your own shop");
+      if (!p) { toast.error("That product is no longer available"); return; }
+      if (p.vendor_id === user.id) { toast.error("You can't message your own shop"); return; }
       try {
         setConvId(
           await openConversation({
