@@ -107,48 +107,6 @@ export const Route = createFileRoute("/dashboard/admin")({
 
 type Status = "pending" | "approved" | "rejected";
 
-type VendorApplication = {
-  id: string;
-  shop: string;
-  owner: string;
-  city: string;
-  cnic: string;
-  phone: string;
-  submitted: string;
-  docs: { cnic: boolean; shopPhoto: boolean; utilityBill: boolean };
-  status: Status;
-};
-
-type ListingReview = {
-  id: string;
-  product: string;
-  vendor: string;
-  price: number;
-  images: number;
-  flags: string[];
-  status: Status;
-};
-
-type PlatformUser = {
-  id: string;
-  name: string;
-  email: string;
-  role: "Buyer" | "Vendor" | "Admin";
-  joined: string;
-  orders: number;
-  blocked: boolean;
-};
-
-type AdminOrder = {
-  id: string;
-  buyer: string;
-  vendor: string;
-  amount: number;
-  method: "Card" | "Bank transfer" | "Cash on collection";
-  payment: "Paid" | "Escrow" | "Refund requested" | "Pending";
-  fulfilment: "Delivered" | "Rider en route" | "Awaiting pickup" | "Processing";
-};
-
 type Complaint = {
   id: string;
   from: string;
@@ -159,207 +117,11 @@ type Complaint = {
   status: "open" | "resolved";
 };
 
-const initialApplications: VendorApplication[] = [
-  {
-    id: "va-1",
-    shop: "iZone Digital",
-    owner: "Faizan Malik",
-    city: "Lahore",
-    cnic: "35202-*******-7",
-    phone: "03001122334",
-    submitted: "2 hours ago",
-    docs: { cnic: true, shopPhoto: true, utilityBill: false },
-    status: "pending",
-  },
-  {
-    id: "va-2",
-    shop: "MacPoint Karachi",
-    owner: "Sana Yousuf",
-    city: "Karachi",
-    cnic: "42101-*******-2",
-    phone: "03218877665",
-    submitted: "Yesterday",
-    docs: { cnic: true, shopPhoto: true, utilityBill: true },
-    status: "pending",
-  },
-  {
-    id: "va-3",
-    shop: "Gadget Bazaar",
-    owner: "Imran Shah",
-    city: "Rawalpindi",
-    cnic: "37405-*******-9",
-    phone: "03334455667",
-    submitted: "3 days ago",
-    docs: { cnic: false, shopPhoto: true, utilityBill: false },
-    status: "pending",
-  },
-];
-
-const initialListings: ListingReview[] = [
-  {
-    id: "lr-1",
-    product: "iPhone 15 Pro Max 256GB",
-    vendor: "Apex Apple Store",
-    price: 389000,
-    images: 6,
-    flags: [],
-    status: "pending",
-  },
-  {
-    id: "lr-2",
-    product: "iPhone 13 128GB",
-    vendor: "CoreX Mobiles",
-    price: 164000,
-    images: 3,
-    flags: ["Stock photo detected", "Serial not visible"],
-    status: "pending",
-  },
-  {
-    id: "lr-3",
-    product: 'MacBook Air 13" M3',
-    vendor: "Orchard Tech",
-    price: 428000,
-    images: 5,
-    flags: ["Watermark from another store"],
-    status: "pending",
-  },
-];
-
-const initialUsers: PlatformUser[] = [
-  {
-    id: "u-1",
-    name: "Hamza Sheikh",
-    email: "hamza@example.com",
-    role: "Buyer",
-    joined: "Mar 2026",
-    orders: 7,
-    blocked: false,
-  },
-  {
-    id: "u-2",
-    name: "Bilal Ahmed",
-    email: "bilal@apexapple.pk",
-    role: "Vendor",
-    joined: "Jan 2019",
-    orders: 412,
-    blocked: false,
-  },
-  {
-    id: "u-3",
-    name: "Maryam Iqbal",
-    email: "maryam@example.com",
-    role: "Buyer",
-    joined: "Nov 2025",
-    orders: 12,
-    blocked: false,
-  },
-  {
-    id: "u-4",
-    name: "Rehan Qureshi",
-    email: "rehan@example.com",
-    role: "Buyer",
-    joined: "Jul 2026",
-    orders: 1,
-    blocked: true,
-  },
-  {
-    id: "u-5",
-    name: "Ayesha Khan",
-    email: "ayesha@orchardtech.pk",
-    role: "Vendor",
-    joined: "Feb 2021",
-    orders: 188,
-    blocked: false,
-  },
-];
-
-const initialOrders: AdminOrder[] = [
-  {
-    id: "AH-24817",
-    buyer: "Hamza Sheikh",
-    vendor: "Apex Apple Store",
-    amount: 389000,
-    method: "Card",
-    payment: "Paid",
-    fulfilment: "Delivered",
-  },
-  {
-    id: "AH-24818",
-    buyer: "Maryam Iqbal",
-    vendor: "CoreX Mobiles",
-    amount: 1181000,
-    method: "Bank transfer",
-    payment: "Escrow",
-    fulfilment: "Rider en route",
-  },
-  {
-    id: "AH-24819",
-    buyer: "Usman Kamran",
-    vendor: "Lumen Accessories",
-    amount: 9800,
-    method: "Cash on collection",
-    payment: "Pending",
-    fulfilment: "Awaiting pickup",
-  },
-  {
-    id: "AH-24820",
-    buyer: "Rehan Qureshi",
-    vendor: "Orchard Tech",
-    amount: 312000,
-    method: "Card",
-    payment: "Refund requested",
-    fulfilment: "Processing",
-  },
-];
-
-const initialComplaints: Complaint[] = [
-  {
-    id: "c-1",
-    from: "Rehan Qureshi",
-    against: "Orchard Tech",
-    topic: "Item not as described",
-    severity: "High",
-    detail:
-      "Listing showed 256GB iPad Pro but the delivered unit is 128GB. Requesting a full refund.",
-    status: "open",
-  },
-  {
-    id: "c-2",
-    from: "Hamza Sheikh",
-    against: "CoreX Mobiles",
-    topic: "Late rider pickup",
-    severity: "Medium",
-    detail: "Rider arrived four hours after the confirmed inspection slot.",
-    status: "open",
-  },
-  {
-    id: "c-3",
-    from: "Maryam Iqbal",
-    against: "Lumen Accessories",
-    topic: "Custom print misaligned",
-    severity: "Low",
-    detail: "Printed case artwork is shifted 4mm from the preview.",
-    status: "resolved",
-  },
-];
-
-const revenueSeries = [
-  { month: "Mar", value: 42 },
-  { month: "Apr", value: 55 },
-  { month: "May", value: 61 },
-  { month: "Jun", value: 74 },
-  { month: "Jul", value: 88 },
-  { month: "Aug", value: 96 },
-];
+const errMsg = (e: unknown) => (e instanceof Error ? e.message : "Something went wrong.");
 
 function AdminDashboard() {
-  const [applications, setApplications] = useState(initialApplications);
-  const [listings, setListings] = useState(initialListings);
-  const [users, setUsers] = useState(initialUsers);
-  const [orders, setOrders] = useState(initialOrders);
-  const [complaints, setComplaints] = useState(initialComplaints);
+  const queryClient = useQueryClient();
   const [userQuery, setUserQuery] = useState("");
-  const [audit, setAudit] = useState<AuditEntry[]>(initialAudit);
   const [auditQuery, setAuditQuery] = useState("");
   const [auditCategory, setAuditCategory] = useState<string>("all");
   const [auditSeverity, setAuditSeverity] = useState<string>("all");
@@ -370,23 +132,45 @@ function AdminDashboard() {
   const [openComplaint, setOpenComplaint] = useState<Complaint | null>(null);
   const [reply, setReply] = useState("");
 
+  const fetchAudit = useServerFn(listAudit);
+  const addAuditFn = useServerFn(addAudit);
+  const fetchListings = useServerFn(listAllListings);
+  const decideListingFn = useServerFn(decideListingSrv);
+  const fetchUsers = useServerFn(listUsers);
+  const blockFn = useServerFn(setUserBlocked);
+  const fetchOrders = useServerFn(listAllOrders);
+  const updateOrderFn = useServerFn(updateOrder);
+  const fetchComplaints = useServerFn(listComplaints);
+  const resolveFn = useServerFn(resolveComplaintSrv);
+
+  const auditQ = useQuery({ queryKey: ["admin-audit"], queryFn: () => fetchAudit() });
+  const listingsQ = useQuery({ queryKey: ["admin-listings"], queryFn: () => fetchListings() });
+  const usersQ = useQuery({ queryKey: ["admin-users"], queryFn: () => fetchUsers() });
+  const ordersQ = useQuery({ queryKey: ["admin-orders"], queryFn: () => fetchOrders() });
+  const complaintsQ = useQuery({ queryKey: ["admin-complaints"], queryFn: () => fetchComplaints() });
+
+  const audit = (auditQ.data ?? []) as AuditEntry[];
+  const listings = listingsQ.data ?? [];
+  const users = usersQ.data ?? [];
+  const orders = ordersQ.data ?? [];
+  const complaints = complaintsQ.data ?? [];
+
+  const refreshAudit = () => void queryClient.invalidateQueries({ queryKey: ["admin-audit"] });
+
   const log = (
     text: string,
     meta?: { category?: AuditCategory; severity?: AuditSeverity; target?: string },
   ) => {
-    setAudit((prev) => [
-      {
-        id: `a-${Date.now()}`,
-        at: new Date().toISOString(),
-        actor: "admin@applehub.pk",
+    addAuditFn({
+      data: {
+        action: text.slice(0, 500),
         category: meta?.category ?? "user",
         severity: meta?.severity ?? "info",
-        action: text,
-        target: meta?.target ?? "—",
-        ip: "39.52.14.201",
+        target: (meta?.target ?? "—").slice(0, 200),
       },
-      ...prev,
-    ]);
+    })
+      .then(refreshAudit)
+      .catch(() => undefined);
   };
 
   const auditActors = useMemo(
@@ -440,10 +224,8 @@ function AdminDashboard() {
     toast.success(`Exported ${filteredAudit.length} audit entries to CSV.`);
   };
 
-
   const fetchSignups = useServerFn(listVendorSignups);
   const decideSignup = useServerFn(decideVendorSignup);
-  const queryClient = useQueryClient();
 
   const signupsQuery = useQuery({
     queryKey: ["vendor-signups"],
@@ -475,20 +257,20 @@ function AdminDashboard() {
       } else {
         removeVendorStore(vars.signup.userId);
       }
-      log(
-        `Vendor account ${vars.signup.email} ${
-          vars.status === "approved" ? "approved" : "rejected"
-        }`,
-      );
+      log(`Vendor account ${vars.status === "approved" ? "approved" : "rejected"}`, {
+        category: "vendor",
+        severity: vars.status === "approved" ? "info" : "warning",
+        target: vars.signup.email,
+      });
       toast.success(
         vars.status === "approved"
           ? `${vars.signup.shop} approved — they can now use the vendor dashboard`
           : `${vars.signup.shop} rejected`,
       );
       void queryClient.invalidateQueries({ queryKey: ["vendor-signups"] });
+      void queryClient.invalidateQueries({ queryKey: ["admin-users"] });
     },
-    onError: (error: unknown) =>
-      toast.error(error instanceof Error ? error.message : "Could not save that decision."),
+    onError: (error: unknown) => toast.error(errMsg(error)),
   });
 
   const [reviewSignup, setReviewSignup] = useState<VendorSignup | null>(null);
@@ -536,81 +318,115 @@ function AdminDashboard() {
       status,
     });
     if (reviewForm.notes.trim()) {
-      log(`Review note for ${reviewSignup.email}: ${reviewForm.notes.trim()}`);
+      log(`Review note: ${reviewForm.notes.trim()}`, { category: "vendor", target: reviewSignup.email });
     }
     setReviewSignup(null);
   };
 
-  const pendingVendors =
-    applications.filter((a) => a.status === "pending").length + pendingSignups.length;
+  const listingMut = useMutation({
+    mutationFn: (v: { id: string; status: "approved" | "rejected" }) => decideListingFn({ data: v }),
+    onSuccess: (_r, v) => {
+      toast.success(`Listing ${v.status === "approved" ? "published" : "removed"}`);
+      void queryClient.invalidateQueries({ queryKey: ["admin-listings"] });
+      void queryClient.invalidateQueries({ queryKey: ["vendor-products"] });
+      refreshAudit();
+    },
+    onError: (e) => toast.error(errMsg(e)),
+  });
+  const decideListing = (id: string, status: Status) => {
+    if (status === "pending") return;
+    listingMut.mutate({ id, status });
+  };
+
+  const blockMut = useMutation({
+    mutationFn: (v: { userId: string; blocked: boolean }) => blockFn({ data: v }),
+    onSuccess: (_r, v) => {
+      toast.success(v.blocked ? "Account blocked" : "Account unblocked");
+      void queryClient.invalidateQueries({ queryKey: ["admin-users"] });
+      refreshAudit();
+    },
+    onError: (e) => toast.error(errMsg(e)),
+  });
+  const toggleUser = (id: string) => {
+    const u = users.find((x) => x.id === id);
+    if (u) blockMut.mutate({ userId: id, blocked: !u.blocked });
+  };
+
+  const orderMut = useMutation({
+    mutationFn: (v: { id: string; action: "refund" | "mark_paid" | "cancel" | "advance" }) =>
+      updateOrderFn({ data: v }),
+    onSuccess: () => {
+      toast.success("Order updated");
+      void queryClient.invalidateQueries({ queryKey: ["admin-orders"] });
+      refreshAudit();
+    },
+    onError: (e) => toast.error(errMsg(e)),
+  });
+
+  const resolveMut = useMutation({
+    mutationFn: (v: { id: string; resolution: string }) => resolveFn({ data: v }),
+    onSuccess: () => {
+      toast.success("Complaint marked resolved");
+      void queryClient.invalidateQueries({ queryKey: ["admin-complaints"] });
+      refreshAudit();
+      setOpenComplaint(null);
+      setReply("");
+    },
+    onError: (e) => toast.error(errMsg(e)),
+  });
+  const resolveComplaint = () => {
+    if (!openComplaint || !reply.trim()) return;
+    resolveMut.mutate({ id: openComplaint.id, resolution: reply.trim() });
+  };
+
+  const pendingVendors = pendingSignups.length;
   const pendingListings = listings.filter((l) => l.status === "pending").length;
   const openComplaints = complaints.filter((c) => c.status === "open").length;
-  const gmv = useMemo(() => orders.reduce((s, o) => s + o.amount, 0), [orders]);
+  const gmv = useMemo(
+    () =>
+      orders
+        .filter((o) => o.payment === "paid" && Date.now() - new Date(o.createdAt).getTime() < 30 * 864e5)
+        .reduce((s, o) => s + o.amount, 0),
+    [orders],
+  );
+
+  const revenueSeries = useMemo(() => {
+    const months: { key: string; month: string; total: number }[] = [];
+    const now = new Date();
+    for (let i = 5; i >= 0; i--) {
+      const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+      months.push({
+        key: `${d.getFullYear()}-${d.getMonth()}`,
+        month: d.toLocaleString("en", { month: "short" }),
+        total: 0,
+      });
+    }
+    for (const o of orders) {
+      if (o.payment !== "paid") continue;
+      const d = new Date(o.createdAt);
+      const m = months.find((x) => x.key === `${d.getFullYear()}-${d.getMonth()}`);
+      if (m) m.total += o.amount;
+    }
+    const max = Math.max(1, ...months.map((m) => m.total));
+    return months.map((m) => ({ month: m.month, total: m.total, value: Math.round((m.total / max) * 100) }));
+  }, [orders]);
+
+  const topVendors = useMemo(() => {
+    const counts = new Map<string, number>();
+    for (const l of listings) counts.set(l.vendor, (counts.get(l.vendor) ?? 0) + 1);
+    const total = listings.length || 1;
+    return [...counts.entries()]
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 6)
+      .map(([name, n]) => ({ name, share: Math.round((n / total) * 100) }));
+  }, [listings]);
 
   const filteredUsers = users.filter((u) =>
     `${u.name} ${u.email} ${u.role}`.toLowerCase().includes(userQuery.toLowerCase()),
   );
 
-  const decideVendor = (id: string, status: Status) => {
-    const app = applications.find((a) => a.id === id);
-    setApplications((prev) => prev.map((a) => (a.id === id ? { ...a, status } : a)));
-    if (app) {
-      if (status === "approved") {
-        approveVendorStore({
-          id: app.id,
-          shop: app.shop,
-          owner: app.owner,
-          city: app.city,
-          phone: app.phone,
-        });
-      } else {
-        removeVendorStore(app.id);
-      }
-    }
-    log(`Vendor “${app?.shop}” ${status === "approved" ? "approved" : "rejected"}`);
-    toast.success(
-      status === "approved"
-        ? `${app?.shop} approved — now live on the Vendors page`
-        : `${app?.shop} rejected`,
-    );
-  };
-
-
-  const decideListing = (id: string, status: Status) => {
-    const item = listings.find((l) => l.id === id);
-    setListings((prev) => prev.map((l) => (l.id === id ? { ...l, status } : l)));
-    log(`Listing “${item?.product}” ${status === "approved" ? "published" : "removed"}`);
-    toast.success(`Listing ${status === "approved" ? "published" : "removed"}`);
-  };
-
-  const toggleUser = (id: string) => {
-    const user = users.find((u) => u.id === id);
-    setUsers((prev) => prev.map((u) => (u.id === id ? { ...u, blocked: !u.blocked } : u)));
-    log(`${user?.blocked ? "Unblocked" : "Blocked"} account ${user?.email}`);
-    toast.success(`${user?.name} ${user?.blocked ? "unblocked" : "blocked"}`);
-  };
-
-  const refund = (id: string) => {
-    setOrders((prev) =>
-      prev.map((o) => (o.id === id ? { ...o, payment: "Paid", fulfilment: "Processing" } : o)),
-    );
-    log(`Refund approved for order ${id}`);
-    toast.success(`Refund approved for ${id}`);
-  };
-
-  const resolveComplaint = () => {
-    if (!openComplaint) return;
-    setComplaints((prev) =>
-      prev.map((c) => (c.id === openComplaint.id ? { ...c, status: "resolved" } : c)),
-    );
-    log(`Complaint ${openComplaint.id} resolved against ${openComplaint.against}`);
-    toast.success("Complaint marked resolved");
-    setOpenComplaint(null);
-    setReply("");
-  };
-
   const stats = [
-    { label: "Gross volume (30d)", value: formatPrice(gmv), icon: TrendingUp },
+    { label: "Paid volume (30d)", value: formatPrice(gmv), icon: TrendingUp },
     { label: "Vendors pending", value: String(pendingVendors), icon: Store },
     { label: "Listings to review", value: String(pendingListings), icon: ImageIcon },
     { label: "Open complaints", value: String(openComplaints), icon: AlertTriangle },
