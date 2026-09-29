@@ -20,6 +20,7 @@ import {
 } from "@/components/ui/select";
 import { conditions, formatPrice, storageOptions, vendors } from "@/lib/marketplace-data";
 import { iphoneModels } from "@/lib/form-options";
+import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/sell")({
   head: () => ({
@@ -67,7 +68,7 @@ function SellPage() {
 
   const nearby = vendors.filter((v) => v.distanceKm <= radius);
 
-  const submit = (e: React.FormEvent) => {
+  const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!requireAuth("Please sign in to send your device to vendors.")) return;
     const parsed = sellSchema.safeParse(form);
@@ -79,8 +80,24 @@ function SellPage() {
       toast.error("Please accept the Terms & Conditions");
       return;
     }
+    const { data: u } = await supabase.auth.getUser();
+    if (!u.user) return;
+    const { error } = await supabase.from("sell_requests").insert({
+      user_id: u.user.id,
+      model: parsed.data.model,
+      storage: parsed.data.storage,
+      condition: parsed.data.condition,
+      battery: parsed.data.battery,
+      asking_price: parsed.data.price,
+      radius_km: radius,
+      details: parsed.data.details || null,
+    });
+    if (error) {
+      toast.error(error.message);
+      return;
+    }
     setSubmitted(true);
-    toast.success(`Offer sent to ${nearby.length} vendors near you`);
+    toast.success("Sell request saved — track it in My account.");
   };
 
   return (

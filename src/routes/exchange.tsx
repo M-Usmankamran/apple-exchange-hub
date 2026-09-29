@@ -24,6 +24,7 @@ import {
   vendors,
 } from "@/lib/marketplace-data";
 import { iphoneModels } from "@/lib/form-options";
+import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/exchange")({
   head: () => ({
@@ -62,10 +63,10 @@ function ExchangePage() {
     return (target?.price ?? 0) - credit;
   }, [wantAmount, target]);
 
-  const submit = (e: React.FormEvent) => {
+  const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!requireAuth("Please sign in to submit an exchange request.")) return;
-    if (!model.trim() || !storage || !condition || !wantAmount) {
+    if (!model.trim() || !storage || !condition || !wantAmount || !target) {
       toast.error("Please complete your device details and asking value");
       return;
     }
@@ -73,8 +74,26 @@ function ExchangePage() {
       toast.error("Please accept the Terms & Conditions");
       return;
     }
+    const { data: u } = await supabase.auth.getUser();
+    if (!u.user) return;
+    const { error } = await supabase.from("exchange_requests").insert({
+      user_id: u.user.id,
+      give_model: model.trim(),
+      give_storage: storage,
+      give_condition: condition,
+      battery: Math.min(100, Math.max(1, Number(battery) || 90)),
+      give_value: Number(wantAmount),
+      target_name: target.name,
+      target_price: target.price,
+      difference,
+      details: details.trim() || null,
+    });
+    if (error) {
+      toast.error(error.message);
+      return;
+    }
     setSent(true);
-    toast.success("Exchange request sent to matching vendors");
+    toast.success("Exchange request saved — track it in My account.");
   };
 
   return (
