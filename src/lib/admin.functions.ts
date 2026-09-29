@@ -20,7 +20,7 @@ async function admin() {
 async function writeAudit(
   db: any,
   context: { userId: string; claims?: any },
-  entry: { action: string; category?: string; severity?: string; target?: string },
+  entry: { action: string; category?: string | undefined; severity?: string | undefined; target?: string | undefined },
 ) {
   await db.from("admin_audit_log").insert({
     actor_id: context.userId,
@@ -228,7 +228,7 @@ export const updateOrder = createServerFn({ method: "POST" })
     const { data: cur, error: e1 } = await db.from("orders").select("status").eq("id", data.id).single();
     if (e1) throw new Error(e1.message);
     const flow = ["pending", "confirmed", "shipped", "delivered"];
-    const patch: Record<string, string> =
+    const patch: { payment_status?: string; status?: string; paid_at?: string } =
       data.action === "refund"
         ? { payment_status: "refunded", status: "cancelled" }
         : data.action === "mark_paid"
