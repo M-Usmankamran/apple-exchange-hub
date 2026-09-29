@@ -1,10 +1,11 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { Loader2, Plus, Trash2 } from "lucide-react";
+import { Loader2, Pencil, Plus, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { AuthGate } from "@/components/site/AuthGate";
 import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -50,6 +51,9 @@ function VendorProducts() {
   const qc = useQueryClient();
   const [f, setF] = useState(empty);
   const [saving, setSaving] = useState(false);
+  const [editing, setEditing] = useState<(typeof list.data extends (infer T)[] | undefined ? T : never) | null>(null);
+  const [ef, setEf] = useState(empty);
+  const [updating, setUpdating] = useState(false);
   const set = (k: keyof typeof empty) => (v: string) => setF((s) => ({ ...s, [k]: v }));
 
   const list = useQuery({
@@ -87,6 +91,48 @@ function VendorProducts() {
     if (error) { toast.error(error.message); return; }
     toast.success("Product added to your shop");
     setF(empty);
+    qc.invalidateQueries({ queryKey: ["my-products"] });
+    qc.invalidateQueries({ queryKey: ["vendor-products"] });
+  }
+
+  function openEdit(p: NonNullable<typeof list.data>[number]) {
+    setEditing(p);
+    setEf({
+      title: p.title,
+      category: p.category,
+      model: p.model ?? "",
+      storage: p.storage ?? "128GB",
+      condition: p.condition,
+      city: p.city,
+      price: String(p.price),
+      stock: String(p.stock),
+      image_url: p.image_url && /^https:\/\//.test(p.image_url) ? p.image_url : "",
+      description: p.description ?? "",
+    });
+  }
+
+  async function saveEdit(e: React.FormEvent) {
+    e.preventDefault();
+    if (!editing) return undefined;
+    const price = Number(ef.price);
+    if (!ef.title.trim() || !(price > 0)) { toast.error("Add a product name and a valid price"); return; }
+    setUpdating(true);
+    const { error } = await supabase.from("vendor_products").update({
+      title: ef.title.trim().slice(0, 120),
+      category: ef.category,
+      model: ef.model.trim() || null,
+      storage: ef.storage,
+      condition: ef.condition,
+      city: ef.city,
+      price,
+      stock: Math.max(0, parseInt(ef.stock) || 0),
+      image_url: /^https:\/\//.test(ef.image_url) ? ef.image_url : editing.image_url,
+      description: ef.description.trim().slice(0, 1000) || null,
+    }).eq("id", editing.id);
+    setUpdating(false);
+    if (error) { toast.error(error.message); return; }
+    toast.success("Listing updated");
+    setEditing(null);
     qc.invalidateQueries({ queryKey: ["my-products"] });
     qc.invalidateQueries({ queryKey: ["vendor-products"] });
   }
